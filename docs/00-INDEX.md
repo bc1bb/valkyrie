@@ -28,6 +28,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 11. `networking/07-online-subsystem-and-telemetry.md` — custom OSS + Epic telemetry.
 12. `networking/08-gameplay-replication.md` — in-match RPC surface.
 13. `networking/09-session-lifecycle-and-roadmap.md` — capstone lifecycle + roadmap.
+14. `networking/10-static-data-distribution.md` — static-data manifest + voice.
 
 ## Catalogue
 
@@ -46,6 +47,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/07-online-subsystem-and-telemetry.md` | net | draft | Custom OnlineSubsystemVk (identity/session/oculus/steam); Epic DataRouter telemetry. |
 | `networking/08-gameplay-replication.md` | net | draft | In-match RPC surface: movement/combat/spectator/match-flow/vehicle/voice. |
 | `networking/09-session-lifecycle-and-roadmap.md` | net | draft | Capstone: eConnectionState machine, failure modes, prioritized re-impl roadmap. |
+| `networking/10-static-data-distribution.md` | net | draft | GetFileList manifest (files[] allow-list) + content download; VOIP note. |
 
 ## Evidence base so far
 
