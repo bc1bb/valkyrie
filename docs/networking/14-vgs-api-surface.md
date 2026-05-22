@@ -25,6 +25,11 @@ The backend is **multi-tenant**. URLs are built from a template
 - **Domains (NEW):** `valkyrieapi.com`, `evevalkyrie.com` (in addition to the
   `eveonline.com` SSO/VGS hosts in `04-*`). So production API calls likely target
   `https://<tenant>.valkyrieapi.com/<resource>/`.
+- **DNS status (E4, `12-*`):** both `valkyrieapi.com` and `evevalkyrie.com` are
+  now **NXDOMAIN** — the dedicated Valkyrie backend domain is gone. This means
+  the *real* VGS API was on `valkyrieapi.com` (not `eveonline.com`, which only
+  survives via EVE Online's wildcard). `valkyrieapi.com` is a clean redirect
+  target for a private server.
 - Local/dev: `http://localhost:10080/%s/` (battle-server reg) and
   `http://127.0.0.1:8080/...` (watchdog) appear for local runs.
 

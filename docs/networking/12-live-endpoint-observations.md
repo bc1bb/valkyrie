@@ -34,6 +34,15 @@ ethics below. Dated 2026-05-22; re-verify before relying (infra can change).
 | `vgs-havoc.testeveonline.com` | 87.237.38.x | resolves; service unknown. |
 | `havoclogin.testeveonline.com` | **NXDOMAIN** | Gone. |
 | `datarouter.ol.epicgames.com` | (no usable A) | Epic telemetry — irrelevant (`07-*`). |
+| `valkyrieapi.com` (+ `www`/`tq`) | **NXDOMAIN** | The dedicated VGS API domain (`14-*`) — fully gone. |
+| `evevalkyrie.com` (+ `www`) | **NXDOMAIN** | Dedicated Valkyrie domain — fully gone. |
+
+> **Key inference:** the **real VGS backend lived on `valkyrieapi.com`** (the
+> multi-tenant `{tenant}.valkyrieapi.com`, `14-*`), which is now **NXDOMAIN**.
+> `vgs-tq.eveonline.com` only still resolves because of the surviving
+> `*.eveonline.com` wildcard (EVE Online proper is alive) — its Valkyrie origin
+> is gone too. For a private server, `valkyrieapi.com` is a **clean redirect
+> target** (unregistered/NXDOMAIN, not parked by a third party).
 
 Takeaway: production + Chaos hostnames still resolve; the prod hosts sit behind
 **Cloudflare** (because EVE Online proper is alive). The Valkyrie-specific
