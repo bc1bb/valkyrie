@@ -12,7 +12,10 @@ WindowsNoEditor/
 
 # --- Raw derived artifacts (dumps generated FROM the copyrighted binary) ----
 # Keep these local only. Distilled findings go into docs/ as prose, not bytes.
+# Ignore EVERYTHING under analysis/ — only analysis/scripts/ is re-included below.
+analysis/*
 analysis/raw/
+analysis/compatdata/
 analysis/**/*.bin
 analysis/**/*.dump
 analysis/**/*.pcap
