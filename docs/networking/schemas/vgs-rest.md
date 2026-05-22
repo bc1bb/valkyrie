@@ -34,7 +34,10 @@ hypermedia : responses embed *_uri fields; client follows them (HATEOAS).
 paging     : offset + limit (and/or page + page_size); count returned.
 filtering  : filter, period, scope, recent, group (query string).
 ids        : numeric ids (pilot_id:int, store id in path e.g. stores/7).
-errors?    : standard HTTP status; client has *_success / *_fail callbacks.
+errors     : standard HTTP status. 401/expired-token => client runs the
+             refresh_token grant and retries (return 401, not generic 5xx).
+             Some endpoints have "allowed" non-fatal codes (e.g. 404 optional).
+retry      : UE4 HttpRetrySystem (backoff); slow-request watchdog. Be forgiving.
 ```
 
 ## Endpoints (confirmed paths in **bold**, inferred in plain)
@@ -58,11 +61,25 @@ PILOTS
 
 SESSIONS / MATCHMAKING (see 05, 06)
      {ver}/valkyrie/sessions/?session_type={str}
-     follow session_uri
+     follow session_uri ; queue by playlist; ServerTime = authoritative clock
+     session_type/mode values: EVkGameModeType (see engine/04-game-modes)
+       PvP (needs backend): Control, Base_PVP, TDM, Bomb, Bounty, Convoy, Armada
+       PvE/narrative (standalone): Survival, Scout, Virus, Training, Recall_*, ...
+     custom-match visibility: PUBLIC | FRIENDS | PRIVATE (EVkCustomMatchType)
      fields: session_id, session_type, max_players, max_pilots,
              min_pilot_rank, max_pilot_rank, num_ai_per_team,
              clones_per_team, battles_required, time_to_battle_join,
              battle_id, battleserver_id, *_uri
+
+PLAYER STATE / PROGRESSION / ECONOMY (see 11)
+     wallet: Currencies { silver (soft), gold (hard), balance }
+     ranks:  reputation_rank, league_score, min/max_pilot_rank
+     rewards (post-battle): win_bonus + match_score + first_win + completion,
+             rewardTier, reward capsules; triggered by battle_completed
+     loadout/customization: hero_ships[ {hero_ship_name, hero_ship_stats} ],
+             loadouts, applied_pilot_cosmetics (decal/skin/paintjob/variant),
+             implants (implant_seconds = time-limited), pilot_cosmetic_variant_uri
+     account flags: npe_completed, build_version, os_platform, client_id
 
 SQUADS / PARTY (see 06)
      follow squad_uri / squad_join_uri / squad_invites_uri / squad_pilot_uri
