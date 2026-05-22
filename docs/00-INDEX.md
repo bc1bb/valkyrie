@@ -68,9 +68,13 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
   `-BATTLESERVER_URI`, `-JWT`, team/AI/rank args. See `networking/05-*`.
 - ✅ Client launch overrides: `-SSOTOKEN=`, `-offline`/`-online` confirmed.
 
+- ✅ REST path namespace: `{version}/valkyrie/<resource>/…` (v1.0 & v2.0 mixed),
+  e.g. `v2.0/valkyrie/accounts/`, `v2.0/valkyrie/stores/7/offers/`. See `01-*`.
+
 ## Open questions (tracked, not yet answered)
 
-- Exact REST paths, HTTP verbs, JSON schemas per `Vk*Resource`.
+- Remaining exact REST paths (pilots/battles/sessions/battleserver), HTTP verbs,
+  and JSON schemas per `Vk*Resource` (some built by concat — need gdb capture).
 - OAuth `client_id`/`client_secret` and whether token endpoint needs Basic auth.
 - JWT signing algorithm + validation key (server-side trust anchor).
 - How the active environment (TQ/Chaos/Havoc) is selected at runtime

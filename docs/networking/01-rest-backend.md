@@ -54,6 +54,33 @@ session/battle-server allocation chain (`VkSessionRequestResource` →
 `VkSessionResource` → `VkBattleServerResource`). Cosmetics/store/loot are
 non-blocking for playability and can return empty/stub payloads initially.
 
+## Confirmed REST path structure (E2)
+
+Path templates recovered from embedded format strings (the leading `%s` is the
+VGS base URL, e.g. `https://vgs-tq.eveonline.com/`). The API namespaces under a
+**`{version}/valkyrie/...`** prefix, with versions mixed **per resource**:
+
+| Path template (after base URL) | Resource | Version |
+|--------------------------------|----------|---------|
+| `v2.0/valkyrie/accounts/` | Accounts (identity/profile root). | v2.0 |
+| `v2.0/valkyrie/stores/7/offers/` | Store offers (store id `7`). | v2.0 |
+| `v1.0/valkyrie/notifications/oculus` | Notifications (Oculus channel). | v1.0 |
+| `…hero_leaderboard/{id}?{query}` | Hero (ship) leaderboard. | — |
+| `…hero_survival_leaderboard/{a}/{b}` | Survival-mode leaderboard. | — |
+| `…wormhole_leaderboard/{id}?{query}` | Wormhole-mode leaderboard. | — |
+
+Observations:
+- **Versioning is per-resource** (`v1.0` and `v2.0` coexist) — a re-implemented
+  backend must route both prefixes.
+- The `valkyrie/` segment namespaces this title within the shared VGS platform
+  (consistent with `intellectual_property=VALKYRIE` in the OAuth grant, `03-*`).
+- `stores/7` implies numeric store ids; leaderboards are keyed by mode + id with
+  a query string (paging/scope).
+- Other resources (`pilots`, `battles`, `sessions`, `battleserver`) follow the
+  same `{version}/valkyrie/<resource>/...` shape by inference (E5) but their
+  exact templates are not all present as static strings (built by concatenation)
+  — confirm via the gdb path in `methodology/traffic-capture-plan.md`.
+
 ## Virtual goods purchase states (`EInAppPurchaseState`, E2)
 
 `VkVirtualGoods` / `VkLootCapsuleResource` transactions resolve into a UE4
