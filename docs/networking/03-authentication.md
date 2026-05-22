@@ -96,3 +96,11 @@ types, validate (or stub) the platform ticket, and return a signed Bearer token
 token. **Token format: JWT** — confirmed by the dedicated-server `-JWT=` launch
 arg (see `05-battle-server-launch.md`); a re-implemented SSO should mint JWTs.
 The signing algorithm and validation key remain to be determined.
+
+**`client_id` not in static strings (E2 negative result):** `client_id` appears
+only as a request *field name* — no literal client_id/secret VALUE is embedded
+as a recoverable string. So the OAuth client credential is either a compiled-in
+constant (raw bytes in `.text`/`.rdata`, not a tidy string) or assembled at
+runtime. Recovering it needs the dynamic/gdb path
+(`methodology/traffic-capture-plan.md`), or derivation from a captured
+`Authorization: Basic …` header on the token request.

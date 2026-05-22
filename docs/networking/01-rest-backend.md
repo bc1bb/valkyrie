@@ -108,6 +108,13 @@ server is then launched with.)
 `hero_ship_stats`, `team_stats`, `implant_seconds`, `applied_pilot_cosmetics`,
 `stats_updated`.
 
+**Client-identification fields** (sent to backend, likely on client/auth calls):
+`client_id`, `build_version`, `os_platform` — let the backend gate by client
+build/platform (cross-ref `VkClientResource`, `OutdatedClient` in `09-*`).
+
+**Analytics event naming:** events follow `event.<area>.<action>` (e.g.
+`event.training_mode.completed`) — Epic DataRouter payloads (`07-*`).
+
 **Account/lifecycle state flags:** `npe_completed` (New Player Experience /
 tutorial done — gates first-time flow) and `battle_completed` (match-end signal
 that drives the post-match results/progression POST). A re-implemented backend
