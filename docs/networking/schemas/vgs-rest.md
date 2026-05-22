@@ -150,6 +150,23 @@ purchase/sale: { currency, amount, parameters }
 client-event : { event_name, count, type_name, + per-event stats }
 ```
 
+### Request bodies (what a re-impl must ACCEPT) — E3
+
+```
+signup/clients POST : { app_guid, run_number, locale, distribution_platform,
+                        cpu_vendor, cpu_brand, gpu_brand, num_cores,
+                        physical_memory_gb, client_type, preferred_region,
+                        app_info, + build/os/hmd fingerprint }
+match-result POST   : { battle_id, pilot_id, team_id,
+   (server, MatchEnd)  battle_stats:{...}, player_stats:{...} }
+                      stats: { score, loot_scores, kills, deaths, assists,
+                        hero_ship_stats, objective_firstblood/multikill/
+                        dronekill/emp/repair/nodekill/carrierkill/capture }
+                      -> backend responds with `rewards` object (above)
+session-request POST: thin — matchmaking selectors (game_mode/session_type/
+                        region as query+body) -> returns `session`
+```
+
 ## Minimal viable backend (maps to roadmap 09 P0/P1)
 
 ```
