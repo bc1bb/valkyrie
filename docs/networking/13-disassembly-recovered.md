@@ -41,10 +41,13 @@ object, not a single number.)
 
 ## Confirmed mechanisms (E2/E3)
 
-- **Custom JSON parser**: `FVkJsonObject` with typed getters, e.g.
-  `FVkJsonObject::TryGetNumberField` (logs "Failed to find number field for
-  field named '%s'"). So the client tolerates missing fields gracefully — a
-  re-impl may omit unknown fields without crashing the client.
+- **Custom JSON parser**: `FVkJsonObject` with a full typed getter set —
+  `TryGetBoolField`, `TryGetNumberField`, `TryGetStringField`,
+  `TryGetObjectField`, `TryGetObjectArrayField`, `TryGetStringArrayField`,
+  `TryGetNumberArrayField`, `Find`. So responses contain **nested objects and
+  arrays** (not flat), and the client **tolerates missing fields** (logs "Failed
+  to find number field for field named '%s'" and continues) — a re-impl may omit
+  unknown fields without crashing the client.
 - **HTTP verb `PUT`** is used (alongside GET/POST) — some resources are updated
   via PUT (e.g. session/state mutations). A re-impl must route PUT.
 

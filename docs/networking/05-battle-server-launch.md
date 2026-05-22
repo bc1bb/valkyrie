@@ -66,6 +66,27 @@ This is the realization of the Plane-1 → Plane-2 seam (`00-architecture.md`):
 4. Backend returns the server's address (+ a client join token) to the client.
 5. Client connects (Plane 2 WebSocket NetDriver) and the match runs.
 
+## Battle lifecycle reporting (server → backend, E2/E3)
+
+Once running, the dedicated server reports match lifecycle to the backend via
+`FVkBattlesResource` (the `battles` resource, `14-*`). Operations observed:
+
+| Event | Meaning |
+|-------|---------|
+| `LobbyStarted` | Pre-match lobby is up (players assembling). |
+| `MatchStarted` | Match began. |
+| `PlayerJoined` / `PlayerDisconnected` | Per-player presence in the battle. |
+| `SetMaxPlayers` | Capacity update. |
+| `MatchNotJoinable` | Battle closed to new joins. |
+| `MatchEnded` | Normal completion (→ results/rewards, `11-*`). |
+| `MatchKilled` | Abnormal termination. |
+| `EndBattle` | Final teardown / deallocation. |
+
+So the backend tracks battle state from these server callbacks (plus the local
+registration in `14-*` and the heartbeat in `06-*`). A re-implemented backend
+must accept these lifecycle reports to keep its session/battle records correct
+(e.g. free the slot on `PlayerDisconnected`, finalize on `MatchEnded`).
+
 ## Re-implementation value
 
 A private orchestrator can host matches by: launching the shipped server binary
