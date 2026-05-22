@@ -106,11 +106,12 @@ to resolve the remaining wire-level unknowns (below). See
   pilot HATEOAS graph, stats/cosmetic/mode vocab). Also surfaced: **multi-tenant
   URL scheme** (`{tenant}.valkyrieapi.com`), a **local Watchdog process**
   (127.0.0.1:8080), and **battle-server local registration** (localhost:10080).
-- ✅ **Pilot object structure recovered** (E3) in parse order — envelope, squad
-  sub-object, link graph, collections, scalars. See `13-*` (fills build step 3.3).
-- Remaining: response nesting for OTHER resources (session/battle/store) & value
-  semantics (the pilot-anchor disasm method, `13-*`, applies to each); precise
-  object nesting best finalized by one captured response per resource (E4).
+- ✅ **Full JSON object model recovered** (E3, `13-*`): common envelope +
+  pilot, session, rewards, squad, leaderboard, challenge, auth-token,
+  client-event, battle-server registration, static-data manifest, store
+  offer/purchase. Field sets + grouping sufficient to scaffold a re-impl.
+- Remaining: exact value types / deep nesting per object — best finalized by one
+  captured response each (E4); all hosts dead except the eveonline.com edge.
 - ~~OAuth client_id/secret values~~ → **reclassified nice-to-have** (`13-*`): a
   re-implemented SSO defines its own client-credential policy, so CCP's original
   values aren't needed to restore play. Basic-auth requirement is confirmed (E4).

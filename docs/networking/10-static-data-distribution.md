@@ -29,26 +29,25 @@ reveal the JSON contract:
 `UVkStaticDataStatics` exposes this data to gameplay; `Static_Data` is the
 in-engine category.
 
-### Inferred GetFileList response shape (E2-derived hypothesis)
+### GetFileList response shape — CONFIRMED (E3, via disassembly `13-*`)
 
 ```jsonc
 {
   "files": [
-    {
-      // required fields (names TBD by capture):
-      "name": "<logical file id/path>",
-      // probable additional fields:
-      "url":  "<download location>",
-      "hash": "<integrity checksum>",
-      "version": "<revision>"
-    }
+    { "filename": "<logical file id/path>",
+      "uri":      "<download location>",
+      "checksum": "<integrity hash>" }
     // ...
-  ]
+  ],
+  "branch_name":  "<build branch>",
+  "build_number": "<build id>"
 }
 ```
 
-Exact field names need a live capture (E4) or deeper static analysis; the
-**structure** (`files: [ {...} ]`) and the allow-list rule are confirmed (E2).
+Field names recovered from the parse routine (`13-*`): each file entry is
+`{filename, uri, checksum}`, and the manifest carries `branch_name` +
+`build_number` (so static data is versioned per build/branch — the client can
+detect stale data). The allow-list rule (only listed files are fetchable) holds.
 
 ### Re-implementation value
 

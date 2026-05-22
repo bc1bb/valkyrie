@@ -195,15 +195,47 @@ Anchor `event_name` → the `client-event` payload carries `event_name`, `count`
 `unlocked`, `cosmetics`/`cosmetic_name`. (Different events fill different
 subsets — see throttling in `14-*`.)
 
-## Object-model coverage status
+## Battle-server registration — recovered (E3)
 
-Recovered statically (E3) so far: **pilot, session, post-battle rewards, squad,
-leaderboard entry, challenge, auth-token response, client-event** + the **common
-envelope**. Not yet recovered via this method: **battle-server registration** and
-the **static-data file** object (their builders/anchors sit in log/other
-contexts; best closed by capture E4 or targeted further disasm). This is broad
-coverage of the JSON object model — enough to scaffold a re-impl pending a
-capture pass to confirm exact nesting/value types.
+Anchor `public_ip` → the dedicated server's self-registration payload (POSTed to
+`battleservers`, cf. local reg `localhost:10080` in `14-*`):
+```
+{ href, battle_id, public_ip, port,
+  map_unique_name, game_mode_unique_name,
+  # host/machine fingerprint:
+  client_id, build_version, os_platform, computer_name, hmd_type, is_2d }
+```
+This is the concrete Plane1→Plane2 seam: the server advertises its `public_ip`
++ `port` (the WebSocket endpoint) keyed by `battle_id`.
+
+## Static-data manifest — confirmed (E3)
+
+Anchor `filename` → `GetFileList` response (confirms `10-*`):
+```
+{ files: [ { filename, checksum, uri } ],
+  branch_name, build_number }
+```
+(So the inferred `{name,url,hash,version}` in `10-*` is really
+`{filename, uri, checksum}` + manifest-level `branch_name`/`build_number`.)
+
+## Store offer / purchase — recovered (E3)
+
+```
+offers:  { products: [ { items: [ { quantity } ], currency, price } ], next }
+purchase/sale request: { currency, amount, parameters }
+```
+(`next` = pagination cursor; media type `application/vnd.ccp.eve.VgsSale-v1+json`,
+`14-*`.)
+
+## Object-model coverage status — COMPLETE (E3)
+
+Recovered statically: **pilot, session, post-battle rewards, squad, leaderboard
+entry, challenge, auth-token response, client-event, battle-server registration,
+static-data manifest, store offer/purchase** + the **common envelope**. This is
+the full set of resources a minimal backend serves. Remaining work is confirming
+exact value types / deep nesting per object — best closed by one captured
+response each (E4), but the field sets + grouping above are sufficient to
+scaffold a working re-implementation.
 
 ## Value
 
