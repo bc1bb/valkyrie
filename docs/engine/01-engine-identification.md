@@ -22,6 +22,14 @@ behaviour can be cross-referenced against the public UE 4.14 source tree.
 `IsLicenseeVersion 0` ⇒ built from Epic's released engine, not a custom CCP
 engine fork at the version-stamp level.
 
+## Distribution identity (Steam, E1)
+
+- **Steam App ID: `688480`** ("EVE: Valkyrie - Warzone"); Steam buildid
+  `2347437`; installdir `EVE Valkyrie - Warzone`.
+- Precisely identifies this title/build, and is the handle for a Steam-context
+  launch (`steam://rungameid/688480`) — see the capture plan's path #1
+  (`methodology/traffic-capture-plan.md`).
+
 ## Project identity (from build-agent paths, E1)
 
 Embedded debug paths look like:

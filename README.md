@@ -25,6 +25,7 @@
 | Project codename | `Vk` (branch `LIVE`)                                      |
 | Build date       | 2017-12-06 (shipping exe)                                 |
 | Platform here    | Windows x64 (`WindowsNoEditor`), shipped via Steam        |
+| Steam App ID     | `688480` (Steam buildid `2347437`)                        |
 | Client binary    | `VkGame/Binaries/Win64/EVE Valkyrie - Warzone.exe` (~62 MB)|
 
 ## Documentation map
