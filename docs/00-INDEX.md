@@ -52,6 +52,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/08-gameplay-replication.md` | net | draft | In-match RPC surface: movement/combat/spectator/match-flow/vehicle/voice. |
 | `networking/09-session-lifecycle-and-roadmap.md` | net | draft | Capstone: eConnectionState machine, failure modes, prioritized re-impl roadmap. |
 | `networking/10-static-data-distribution.md` | net | draft | GetFileList manifest (files[] allow-list) + content download; VOIP note. |
+| `networking/11-progression-economy-model.md` | net | draft | Backend player-state: Silver/Gold currency, rewards, ranks, loadout/cosmetic/implant/hero-ship data. |
 | `networking/schemas/vgs-rest.md` | net | draft | Consolidated VGS REST reference: base/versioning, endpoints, object fields, MVP backend. |
 
 ## Evidence base so far
