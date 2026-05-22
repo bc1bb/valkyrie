@@ -68,6 +68,22 @@ server (same engine) runs it; the balance *values* live in the pak.
   (horizon/attitude reference in 360° space; a key VR-comfort/UX element).
 - `VkWarpGate` — warp-gate actor (map traversal / mode element).
 
+## Camera / view modes (E1/E2)
+
+- **View modes** `EVkViewMode` = **FirstPerson** (in-cockpit, the default VR
+  view), **ThirdPerson** (external chase), **Both** — toggled by
+  `EVR_ToggleCameraMode` (`engine/03-*`).
+- **Cameras:** `AVkPlayerCamera` (+ `UVkCameraComponent`) the gameplay camera;
+  `AVkVrUiPlayerCamera` the front-end/hangar camera (`gameplay/13`);
+  `UVkSpectatorModeCamera` spectating (`gameplay/09`); `AVkFlyCameraController`
+  a free-fly/debug cam; `VkCameraLight` a camera-attached light.
+- **Death cam / killcam:** `AVkDeathCamera` + `AVkKillerShipViewerUI` show your
+  killer's ship on death — a **live** "who killed you" view (not a recorded
+  replay; the game has no demo-replay system, `gameplay/09`).
+
+Camera is client-local; the server replicates view-target for spectating
+(`networking/08-*` `ServerView*`).
+
 ## Scoring system (E1/E2)
 
 `VkPlayerScoreObjectiveManager` drives a large family of
