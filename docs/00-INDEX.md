@@ -57,6 +57,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/11-progression-economy-model.md` | net | draft | Backend player-state: Silver/Gold currency, rewards, ranks, loadout/cosmetic/implant/hero-ship data. |
 | `networking/12-live-endpoint-observations.md` | net | **verified** | E4: DNS + live probes — SSO/token endpoint alive behind Cloudflare, 401 confirms Basic client auth; Chaos DNS alive, Havoc gone. |
 | `networking/13-disassembly-recovered.md` | net | draft | E3: disasm method + recovered fields (match-config, rank-up rewards), FVkJsonObject, PUT verb; client_id not needed for re-impl. |
+| `networking/14-vgs-api-surface.md` | net | draft | **Full recovered API surface**: multi-tenant URLs (valkyrieapi.com), all resources/paths, pilot HATEOAS graph, stats/cosmetic/mode taxonomies, client fingerprint, local watchdog + battleserver reg. |
 | `networking/schemas/vgs-rest.md` | net | draft | Consolidated VGS REST reference: base/versioning, endpoints, object fields, MVP backend. |
 
 ## Phase status
@@ -98,10 +99,13 @@ to resolve the remaining wire-level unknowns (below). See
 
 ## Open questions (tracked, not yet answered)
 
-- Remaining exact REST paths (pilots/battles/sessions/battleserver) + verbs
-  (GET/POST/PUT seen) and full per-resource JSON schemas. **Tractable via the
-  disassembly method (E3, `13-*`)** — point it at each `Vk*Resource` builder —
-  in addition to live capture (E4).
+- ✅ **Most REST paths + per-resource field sets recovered** from the backend
+  FString cluster — see `14-vgs-api-surface.md` (resources, path templates,
+  pilot HATEOAS graph, stats/cosmetic/mode vocab). Also surfaced: **multi-tenant
+  URL scheme** (`{tenant}.valkyrieapi.com`), a **local Watchdog process**
+  (127.0.0.1:8080), and **battle-server local registration** (localhost:10080).
+- Remaining: exact response **nesting/structure** & value semantics per resource
+  (field NAMES known; shapes need one captured response each — E4 — or more E3).
 - ~~OAuth client_id/secret values~~ → **reclassified nice-to-have** (`13-*`): a
   re-implemented SSO defines its own client-credential policy, so CCP's original
   values aren't needed to restore play. Basic-auth requirement is confirmed (E4).

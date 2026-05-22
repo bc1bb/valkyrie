@@ -19,11 +19,15 @@ need a real capture to confirm (see `methodology/traffic-capture-plan.md`).
 
 ```
 base_url       = https://vgs-tq.eveonline.com/        # TQ (prod); see 04
+multi-tenant   = {scheme}://{tenant}.{domain}/{path}/ # %s://%s.%s/%s/ ; see 14
+domains        = valkyrieapi.com, evevalkyrie.com, eveonline.com  # NEW (14)
 path_prefix    = {version}/valkyrie/                  # version is PER-RESOURCE
 versions_seen  = v1.0, v2.0                            # both must be routed
-auth           = Authorization: Bearer <JWT>          # see 03
-content_type   = application/json; charset=utf-8       # request + response
-encoding       = snake_case field names
+auth           = Authorization: Bearer <JWT>          # REST; see 03
+token-endpoint = Authorization: Basic b64(client_id:client_secret) # OAuth; 03/12
+content_type   = application/json (+ vnd.ccp.eve.VgsSale-v1+json for sales)
+encoding       = snake_case field names ; HATEOAS *_uri links
+full-surface   = see networking/14-vgs-api-surface.md (resources/fields/taxonomies)
 ```
 
 ## Conventions
