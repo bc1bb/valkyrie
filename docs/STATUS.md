@@ -37,6 +37,32 @@ embedded strings/symbols · **E3** static disassembly · **E4** live observation
 | Static-data manifest | ✅ confirmed | E3 | `files[{filename,uri,checksum}]+branch/build`. `10-*` |
 | Local persistence / settings | ✅ complete | E2 | Cache, not authoritative. `engine/05-*` |
 
+### Gameplay / client architecture (whole-game RE)
+
+| Area | Coverage | Top tier | Notes / gap |
+|------|----------|----------|-------------|
+| Player/ship control + scoring | ✅ strong | E1/E2 | Controller/pawn/vehicle/movement/cockpit; `VkPlayerScoreObjective_*`. `gameplay/01` |
+| Combat / weapons / damage | ✅ strong | E1/E2 | Weapon taxonomy, multi-channel damage, hit/crit points, missile homing. `gameplay/02` |
+| Abilities / ultimates / buffs | ✅ strong | E2 | Full rosters + per-ability state machines. `gameplay/03` |
+| Game-mode mechanics | ✅ strong | E1/E2 | Capture pts, `EArmadaState`, clones, MatchSettings map. `gameplay/04` |
+| VR UI / HUD | ✅ strong | E1/E2 | HSOG framework, radar/brackets, smart-ping. `gameplay/05` |
+| Pilot / loadout / cosmetics (client) | ✅ strong | E2 | Slots, hero-ship/cosmetic/upgrade/implant model. `gameplay/06` |
+| Tournament brackets | ✅ N/A | E2 | Confirmed absent (HUD reticles only). `gameplay/07` |
+| Framework (GameMode/State/Instance, Core) | ✅ strong | E1/E2 | Vk triad incl. GameLift mode; FVkJsonObject. `gameplay/08` |
+| Spectator / observer | ✅ strong | E2/E5 | View-target flow, showfloor; no replay. `gameplay/09` |
+| World / levels / spawning | ✅ strong | E1/E2 | Sublevel streaming, launch-tube spawn, bounds. `gameplay/10` |
+| Effects (driver) / animation | ◑ driver-only | E1/E2 | Command-list manager; assets out of scope. `gameplay/11` |
+| Tactical map / comms (quick-chat, call-ins) | ✅ strong | E2 | Networked; tac-map=clone-vat screen. `gameplay/12` |
+| Front-end / menu flow | ✅ strong | E1/E2 | 3 scene managers, screen catalogue, nav flow. `gameplay/13` |
+| AI / bots | ✅ strong | E1/E2 | Behaviour FSM, navigation, ability roster. `engine/07` |
+| Input peripherals / rendering-audio-VR | ✅ complete | E1/E2 | HOTAS/TrackIR/Tobii; Oculus/SteamVR, Wwise. `engine/03`,`06` |
+| Enum/type index (116 enums) | ✅ index | E2 | Lookup map. `reference/enums.md` |
+
+**Whole-client RE is comprehensive at the architecture/interface level.** What's
+*not* covered (by design or tier): exact field offsets / replicated-property
+layouts (need real disassembly w/o symbols), algorithm internals, and all
+asset/content/balance in the `.pak` (out of scope).
+
 ## Blocking-vs-done for restoring multiplayer
 
 **Done (enough to build):** host topology, auth contract, REST surface + object
