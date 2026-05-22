@@ -49,6 +49,7 @@ a re-implementer; this INDEX is the full catalogue.
 | `engine/04-game-modes.md` | engine | draft | Game-mode taxonomy (EVkGameModeType/SubLevels/CustomMatchType); PvP-vs-PvE backend-need split. |
 | `engine/05-local-persistence.md` | engine | draft | Local save/settings: VkPersistentData (_pers.data), VkPersistentStats, settings UObjects; cache vs backend authority. |
 | `engine/06-rendering-audio-vr.md` | engine | draft | Middleware: Oculus/SteamVR HMD, forward+InstancedStereo+MultiRes+volumetric rendering, Wwise+Oculus HRTF audio. |
+| `engine/07-ai-bots.md` | engine | draft | Server-run bot AI (VkAI* cluster): behaviour states, navigation, abilities/ultimates; configured by match params. |
 | `binary/01-binary-overview.md` | binary | draft | PE layout, sections, build metadata, embedded toolchain. |
 | `networking/00-architecture.md` | net | draft | Three planes: REST backend, WebSocket replication, Steam/Oculus platform. |
 | `networking/01-rest-backend.md` | net | draft | VkRestUtils resource clients = backend REST API surface. |
