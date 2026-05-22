@@ -63,7 +63,12 @@ Takeaway: production + Chaos hostnames still resolve; the prod hosts sit behind
 ## What this does NOT tell us (still open)
 
 - The actual `client_id`/`client_secret` (needs the binary/dynamic analysis,
-  `03-*`; not obtainable by probing).
+  `03-*`; not obtainable by probing). **Static recovery attempted & failed:** a
+  scan of all embedded strings for a hardcoded `Authorization: Basic <base64>`
+  blob decoding to `client_id:client_secret` found **none** — so the Basic
+  credential is assembled at runtime from separate constants. The reliable way
+  to get it is a **gdb breakpoint on the Basic-auth header construction**
+  (`methodology/traffic-capture-plan.md`).
 - Whether the **Valkyrie** grants (`steam_ticket`, Oculus) still function — the
   origin VGS/Valkyrie services are presumed decommissioned; only the SSO shell
   (shared with live EVE Online) answers.
