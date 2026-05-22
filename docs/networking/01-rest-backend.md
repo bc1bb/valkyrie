@@ -81,6 +81,29 @@ Observations:
   exact templates are not all present as static strings (built by concatenation)
   — confirm via the gdb path in `methodology/traffic-capture-plan.md`.
 
+## Confirmed query parameters (E2)
+
+Recovered from embedded query-string format templates. Resource keys are
+**snake_case**:
+
+| Param | Used by / meaning |
+|-------|-------------------|
+| `pilot_id=<int>` | Single-pilot lookup. |
+| `pilot_ids=<csv>` | Batch pilot lookup. |
+| `session_type=<str>` | Session resource filter (match type). |
+| `group=<str>` | Grouping selector (e.g. leaderboard group). |
+| `friendly_name=<str>` (`friendlyName`) | Display-name lookup/set. |
+| `recent=<str>` | Recency filter. |
+| `version=<str/int>`, `app=<str>`, `user=<str>` | Client/version/user scoping. |
+
+**Paging / filtering vocabulary** (case varies — query vs. JSON field):
+`offset`, `limit`, `count`, `filter`, `period`, `scope`, `page`, `page_size`,
+`max_results`. A re-implemented backend should honour `offset`+`limit` (and/or
+`page`+`page_size`) paging on list endpoints (leaderboards, pilots, offers).
+
+Auth-bearing params already covered in `03-authentication.md`
+(`steam_ticket`, `refresh_token`, `oculus_user_id`/`oculus_nonce`/`oculus_callsign`).
+
 ## Virtual goods purchase states (`EInAppPurchaseState`, E2)
 
 `VkVirtualGoods` / `VkLootCapsuleResource` transactions resolve into a UE4
