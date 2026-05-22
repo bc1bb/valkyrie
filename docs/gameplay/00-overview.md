@@ -44,6 +44,12 @@ Method: class clusters (E1 source paths) + enums/fields (E2 strings) +
 
 ## Status
 
-Gameplay RE in progress (networking complete). Docs added per subsystem; this
-map updates as each is documented. The goal is the **whole** client RE'd and
-clean-room documented.
+Gameplay RE now broadly **complete** at the interface/architecture level. Docs
+01–13 cover: player/ship control + scoring, combat, abilities, mode-mechanics,
+VR-UI, pilot/loadout, brackets (negative), framework, spectator, world/spawning,
+effects/animation, tactical-map/comms, front-end flow — plus AI (`engine/07-*`).
+Together with the complete networking layer, this documents essentially the
+whole client architecture. Remaining: deeper field-layout/value detail (needs
+E3 disassembly / E4 capture) and any minor subsystems surfaced by further
+coverage sweeps. The goal — the **whole** client RE'd and clean-room documented
+— is substantially met at the architecture level.

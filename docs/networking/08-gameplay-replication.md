@@ -55,6 +55,21 @@ is replicated to the server (loadout enforced server-side).
 `ServerUnmutePlayer` (and the implied mute counterpart) — UE4 voice mute state
 is replicated. Voice itself likely rides the Oculus/Wwise audio path.
 
+## Comms — quick-chat & call-ins (E2)
+
+Team coordination is server-validated and replicated (see
+`gameplay/12-tacticalmap-comms.md`):
+- `ServerSendQuickChatMessage` (+ `_Validate`) — the comm-wheel quick-chat
+  (`EVkQuickChatMessage` vocabulary), replicated via
+  `VkQuickChatReplicatedMessageData`; surfaces as text + VO + over-bracket icons.
+- `ServerRequestCallIn` (+ `_Validate`) — request a team **call-in** (deployable
+  support: `VkCallIn_EMP` / `VkCallIn_OverShield` / `VkCallIn_RepairBots`),
+  replicated via `bCallInActive`/`OnRep_CallInActive`, gated by a tier unlock.
+- Smart-pings (`ServerSendSmartPing` / `Multicast_OnPing_*`) — see
+  `gameplay/05-vr-ui.md`.
+
+A re-implemented server must accept/validate these and multicast the result.
+
 ## Reservation bridge
 
 `ServerUpdateReservationRequest` — the in-game RPC that feeds the PartyBeacon

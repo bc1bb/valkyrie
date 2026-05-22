@@ -79,6 +79,10 @@ a re-implementer; this INDEX is the full catalogue.
 | `gameplay/07-brackets.md` | gameplay | draft | NEGATIVE finding: no tournament-bracket system; "brackets" = HUD reticles. Competitive = leagues/leaderboards. |
 | `gameplay/08-framework.md` | gameplay | draft | Framework glue: Vk GameInstance/GameMode/GameState triad (incl. GameLift mode), VkCore, FVkJsonObject, client static-data binding. |
 | `gameplay/09-spectator.md` | gameplay | draft | Spectator system: pawn/HUD/camera, server-authoritative view-target flow, showfloor/kiosk; KillCam=clone-vat screen; no replay system. |
+| `gameplay/10-world-spawning.md` | gameplay | draft | World/level sublevel streaming (VkMapLoader), player-start/launch-tube spawning, spawn-point groups, respawn-map, world bounds. |
+| `gameplay/11-effects.md` | gameplay | draft | Effects driver (EffectManager command-list + subsystems) & animation drivers — code layer, not VFX assets. |
+| `gameplay/12-tacticalmap-comms.md` | gameplay | draft | Tactical map (clone-vat screen) + networked quick-chat (comm wheel/VO) + call-ins (EMP/OverShield/RepairBots). |
+| `gameplay/13-frontend-flow.md` | gameplay | draft | Front-end menu flow: 3 scene managers (Login/HUB/BattleCarousel), screen catalogue, navigation mapped to connection states + backend. |
 
 ## Phase status
 
