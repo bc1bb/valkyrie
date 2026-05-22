@@ -128,6 +128,26 @@ must set these properties authoritatively so clients' `OnRep_*` handlers fire.
 The `*Config` properties (Weapon/Projectile/InstantHit) replicate per-shot
 parameters — the server pushes the loadout-derived config to clients.
 
+## Replication tuning (E2)
+
+How replication is paced/scoped (engine-stock UE4 mechanisms; a re-impl server
+on the same engine inherits them, but should match the tuning):
+
+- **Relevancy/priority (per actor):** `NetUpdateFrequency`/
+  `MinNetUpdateFrequency`, `NetCullDistanceSquared`, `NetPriority`,
+  `bAlwaysRelevant`, `bOnlyRelevantToOwner`, `bNetUseOwnerRelevancy` — standard
+  UE4 distance/priority relevancy. So far-away/low-priority actors replicate
+  less; owner-only state (loadout, etc.) doesn't broadcast.
+- **Server tick rate:** `NetServerMaxTickRate` (net update tick), `WarmupTickRate`
+  (pre-match), `bClampListenServerTickRate`. The dedicated server runs a capped
+  net tick; warmup uses a separate rate.
+- **Client smoothing:** `InterpolationTime`, `OcclusionInterpolationTime`,
+  `RotationInterpTime`, `BaseNonRenderedUpdateRate` — client interpolates
+  replicated movement (and updates off-screen actors less often).
+- **Replicated payload structs:** `VkPlayerObjectiveReplicatedData`,
+  `VkPlayerObjectiveEventReplicatedData`, `VkQuickChatReplicatedMessageData`
+  (`12-*`) — USTRUCTs bundled into replication for objective/comms state.
+
 ## Re-implementation value
 
 The bulk of replication is **engine-stock UE 4.14** — a re-implemented server
