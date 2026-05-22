@@ -56,6 +56,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/10-static-data-distribution.md` | net | draft | GetFileList manifest (files[] allow-list) + content download; VOIP note. |
 | `networking/11-progression-economy-model.md` | net | draft | Backend player-state: Silver/Gold currency, rewards, ranks, loadout/cosmetic/implant/hero-ship data. |
 | `networking/12-live-endpoint-observations.md` | net | **verified** | E4: DNS + live probes — SSO/token endpoint alive behind Cloudflare, 401 confirms Basic client auth; Chaos DNS alive, Havoc gone. |
+| `networking/13-disassembly-recovered.md` | net | draft | E3: disasm method + recovered fields (match-config, rank-up rewards), FVkJsonObject, PUT verb; client_id not needed for re-impl. |
 | `networking/schemas/vgs-rest.md` | net | draft | Consolidated VGS REST reference: base/versioning, endpoints, object fields, MVP backend. |
 
 ## Phase status
@@ -97,10 +98,13 @@ to resolve the remaining wire-level unknowns (below). See
 
 ## Open questions (tracked, not yet answered)
 
-- Remaining exact REST paths (pilots/battles/sessions/battleserver), HTTP verbs,
-  and JSON schemas per `Vk*Resource` (some built by concat — need gdb capture).
-- OAuth `client_id`/`client_secret` values (Basic auth requirement now CONFIRMED
-  E4; the credential VALUES still need binary/dynamic analysis).
+- Remaining exact REST paths (pilots/battles/sessions/battleserver) + verbs
+  (GET/POST/PUT seen) and full per-resource JSON schemas. **Tractable via the
+  disassembly method (E3, `13-*`)** — point it at each `Vk*Resource` builder —
+  in addition to live capture (E4).
+- ~~OAuth client_id/secret values~~ → **reclassified nice-to-have** (`13-*`): a
+  re-implemented SSO defines its own client-credential policy, so CCP's original
+  values aren't needed to restore play. Basic-auth requirement is confirmed (E4).
 - JWT signing algorithm + validation key (server-side trust anchor).
 - How the active environment (TQ/Chaos/Havoc) is selected at runtime
   (NOT `-tq/-chaos/-havoc`; those were host-string substrings, debunked).
