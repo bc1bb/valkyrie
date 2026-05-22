@@ -109,11 +109,23 @@ early init (likely missing HMD/`d3d`/display or a Steam-app-context check)
 *before* it constructs `OnlineSubsystemVk` and issues the SSO call. So no E4
 backend evidence yet.
 
+**Confirmed launch flags (E2, from binary strings):** `-nullrhi` (null
+renderer — no GPU/HMD), `-server` (headless dedicated-server mode), `-game`
+(client), `-vr`, `-d3d11`/`-d3d12`/`-opengl` (RHI selection). These are
+stock-UE4 flags but their presence confirms the binary supports a **headless
+path**.
+
 **What a networked capture needs (next-run prerequisites):**
-1. The game must survive init far enough to reach OnlineSubsystem login. Try:
-   provide a display/`Xvfb` (present here), launch via Steam's own app id so the
-   Steam API context initializes, and/or set flags to bypass VR/HMD requirement
-   if one exists (`-nohmd`/`-nullrhi`-style — to be confirmed, not yet observed).
+1. The game must survive init far enough to reach OnlineSubsystem login. Two
+   paths, headless-first:
+   - **`-server -nullrhi`** (recommended): runs the **dedicated server** with no
+     renderer/HMD. The dedicated server authenticates to the backend with its
+     `-JWT` (`05-*`) and resolves the VGS host — a clean, UI-free capture target
+     whose outbound DNS/`connect()` is the first real E4 datapoint. Feed it a
+     synthesized `-BATTLEID/-BATTLESERVER_URI/-JWT` arg set.
+   - **client** path: provide a display/`Xvfb` (present here), launch via Steam's
+     app id so the Steam API context initializes, add `-nullrhi`/`-vr`-off to
+     dodge the HMD requirement, and let the `steam_ticket` grant fire the SSO call.
 2. Once it reaches login, the `steam_ticket` grant fires the HTTPS call to the
    SSO host — that DNS lookup/`connect()` is the first real E4 datapoint, even
    though the dead server won't answer (the *attempt* confirms host + ordering).
