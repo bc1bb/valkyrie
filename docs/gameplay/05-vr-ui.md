@@ -170,6 +170,16 @@ This is where the UI meets the networking docs: matchmaking/beacons
 (`networking/06-*`), session lifecycle (`networking/09-*`), battle-server launch
 (`networking/05-*`), and progression/economy (`networking/11-*`).
 
+## Text feeds, subtitles & localization (E1/E2)
+
+- **In-game text feeds:** `AVkGameTextFeed` (kill/event feed) and
+  `AVkQuickChatTextFeed` (comms feed, `gameplay/12`) present scrolling text events.
+- **Subtitles:** `AVkSubtitleManager` drives subtitles for cinematics/VO.
+- **Localization:** UE4 stock `FText`/`Culture`; **8 languages** shipped —
+  English, French, German, Italian, Spanish, Japanese, Korean, Chinese. The
+  translated string tables live in the pak (out of scope); the system is
+  engine-stock + these Vk feed/subtitle managers. Client-local.
+
 ## Re-implementation / preservation relevance
 
 - **Mostly client-local.** The HUD, brackets, crosshair, orientation circle, and
