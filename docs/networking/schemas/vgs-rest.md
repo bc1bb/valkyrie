@@ -115,6 +115,40 @@ BATTLE RESULTS
      battle_completed report at match end -> progression/stats update
 ```
 
+## Object model (recovered via disassembly, E3 — full detail in `13-*`)
+
+All responses wrapped: `{ uri, verb, message, content:{ <object> } }`.
+
+```
+auth-token   : { access_token, refresh_token, expires_in }
+pilot        : { pilot_id, callsign/pilot_name, gender/has_set_gender,
+                 reputation_rank, league_score, balance, npe_completed,
+                 eula_signed, + ~25 *_uri links, + collections: hero_ships,
+                 implants, challenges, pilot_cosmetics, applied_*_cosmetics,
+                 loot_capsules, settings; + nested squad & current-session }
+session      : { session_uri, pilots_uri, max_pilots, current_players,
+                 max_spectators, current_spectators, owner_callsign,
+                 owner_platform, in_progress, custom_settings{mode toggles} }
+squad        : { squad_uri, squad_version, squad_leader_id/callsign, invites,
+                 squad_join_uri, + matchmaking ctx: game_mode, status,
+                 is_joinable, session_id, battleserver_id, min/max_pilot_rank }
+battleserver : { href, battle_id, public_ip, port, map_unique_name,
+   (server reg)  game_mode_unique_name, + host fp: client_id, build_version,
+                 os_platform, computer_name, hmd_type, is_2d }
+rewards      : { base, bonus, boost, event, old_score, new_score, first_win,
+   (MatchEnd)    loot, loot_score_capsules, reputation_capsules,
+                 challenge_capsules, proving_grounds_reward_name }
+leaderboard  : { pilots:[{ pilot_id, callsign, platform, rank, position,
+                 points, kills, kd_ratio, league_position, league_score,
+                 battles, battles_required }] }
+challenge    : { challenge_id, challenge_name, difficulty_name, challenge_url,
+                 progress, rewards:{type,amount}, max_* objective thresholds }
+staticdata   : { files:[{ filename, uri, checksum }], branch_name, build_number }
+store offer  : { products:[{ items:[{ quantity }], currency, price }], next }
+purchase/sale: { currency, amount, parameters }
+client-event : { event_name, count, type_name, + per-event stats }
+```
+
 ## Minimal viable backend (maps to roadmap 09 P0/P1)
 
 ```
