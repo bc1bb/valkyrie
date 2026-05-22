@@ -77,10 +77,15 @@ observe well-formed framing to compare against.
 - **Capture/stub:** `tcpdump` (raw), `nc`, `python3` (write a stub
   HTTPS/WebSocket server), `strace` (observe `connect()`/DNS), `gdb` (inspect the
   JWT-validation path dynamically). `objdump`/`strings` already used for static.
-- **Missing:** `mitmproxy`/`mitmdump` (no `pip`/`sudo` in this env yet) — either
-  install via a venv/system package when network/permissions allow, or hand-roll
-  a TLS-terminating stub in `python3` (`ssl` + `http.server` + a `websockets`
-  shim) using a locally-generated CA the client's OpenSSL is told to trust.
+- **Missing:** `mitmproxy`/`mitmdump` — hand-roll a TLS-terminating stub in
+  `python3` (`ssl` + `http.server` + a `websockets` shim) with a local CA.
+- **Disassembler: AVAILABLE.** Capstone 5.x + pefile are installed in a venv
+  (`/home/agent/re-venv`, git-ignored). `analysis/scripts/disasm_func.py <VA>`
+  disassembles a function with RIP-relative string targets annotated inline —
+  enabling **function-level (deeper E3)** recovery of algorithms / data flow
+  (e.g. the Basic-auth `client_id` construction, the flight/damage logic),
+  beyond the field-name level of `recover_object.py`. Pair with a known xref VA
+  from `recover_object.py` as the entry anchor.
 
 ### Practical first experiment (cheapest signal)
 
