@@ -90,6 +90,39 @@ hits, in what sequence) — this validates the host topology (`04-*`) and the
 `eConnectionState` ordering (`09-*`) without needing to decrypt anything. Then
 escalate to the redirect+TLS-terminating stub for payload-level detail.
 
+## Probe results — run #1 (2026-05-22, `analysis/scripts/capture_launch.sh`)
+
+First bounded launch (Proton Experimental, `strace -f -e trace=network`, 75s cap):
+
+- **Proton runs** the client via the Steam Linux Runtime
+  (`pressure-vessel` → `srt-bwrap` sandbox → bundled Wine). The launch path and
+  env (`STEAM_COMPAT_DATA_PATH`, `STEAM_COMPAT_CLIENT_INSTALL_PATH`) are correct.
+- Launching the game **also brings up the Steam client** (steamwebhelper etc.);
+  a logged-in Steam session is present on this host.
+- **The game process exited (code 5) before any backend networking.** The only
+  network syscalls captured (~23) were Steam-runtime **internal Unix-socket**
+  fd-passing — **zero `connect()` to any internet IP, zero DNS queries** for
+  `login.eveonline.com` / `vgs-tq.eveonline.com`.
+
+**Interpretation:** in this headless/no-VR context the client aborts during
+early init (likely missing HMD/`d3d`/display or a Steam-app-context check)
+*before* it constructs `OnlineSubsystemVk` and issues the SSO call. So no E4
+backend evidence yet.
+
+**What a networked capture needs (next-run prerequisites):**
+1. The game must survive init far enough to reach OnlineSubsystem login. Try:
+   provide a display/`Xvfb` (present here), launch via Steam's own app id so the
+   Steam API context initializes, and/or set flags to bypass VR/HMD requirement
+   if one exists (`-nohmd`/`-nullrhi`-style — to be confirmed, not yet observed).
+2. Once it reaches login, the `steam_ticket` grant fires the HTTPS call to the
+   SSO host — that DNS lookup/`connect()` is the first real E4 datapoint, even
+   though the dead server won't answer (the *attempt* confirms host + ordering).
+3. For payloads, add the redirect + TLS-terminating stub (above).
+
+> Note: do not repeatedly spawn full game launches in a tight automation loop —
+> each pulls up the whole Steam+Proton+Wine stack. Run launch probes
+> deliberately, one at a time, with a hard timeout and process cleanup after.
+
 ## Clean-room boundary
 
 Capturing the client's *own emitted traffic* and our *own stub's* behaviour is
