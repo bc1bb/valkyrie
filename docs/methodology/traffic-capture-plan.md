@@ -68,12 +68,27 @@ Once the client opens the NetDriver WebSocket, capture the HTTP Upgrade (the
 `NMT_*` handshake). A local UE 4.14 dedicated server is the cleanest way to
 observe well-formed framing to compare against.
 
-## Tooling available on this machine
+## Tooling available on this machine (assessed 2026-05-22)
 
-`tcpdump` (raw capture), `nc`, `python3` (write a stub HTTPS/WebSocket server),
-`strace`/`ltrace` (observe syscalls/connects if running the client under Wine),
-`gdb` (inspect the JWT validation path dynamically). `mitmproxy` would need
-installing (no pip yet — use a venv or system package when network allows).
+- **Runner: Proton Experimental** is bundled inside the Steam snap
+  (`steamapps/common/Proton - Experimental`). The Windows client can be launched
+  through it on Linux — so the E4 loopback path is **feasible** here without a
+  separate Wine install. (Standalone `wine`/`wine64` are NOT on PATH.)
+- **Capture/stub:** `tcpdump` (raw), `nc`, `python3` (write a stub
+  HTTPS/WebSocket server), `strace` (observe `connect()`/DNS), `gdb` (inspect the
+  JWT-validation path dynamically). `objdump`/`strings` already used for static.
+- **Missing:** `mitmproxy`/`mitmdump` (no `pip`/`sudo` in this env yet) — either
+  install via a venv/system package when network/permissions allow, or hand-roll
+  a TLS-terminating stub in `python3` (`ssl` + `http.server` + a `websockets`
+  shim) using a locally-generated CA the client's OpenSSL is told to trust.
+
+### Practical first experiment (cheapest signal)
+
+Run the client under Proton with `strace`/`tcpdump` and **no** backend redirect,
+just to capture **DNS lookups + TLS SNI + connection order** (which hosts it
+hits, in what sequence) — this validates the host topology (`04-*`) and the
+`eConnectionState` ordering (`09-*`) without needing to decrypt anything. Then
+escalate to the redirect+TLS-terminating stub for payload-level detail.
 
 ## Clean-room boundary
 
