@@ -29,6 +29,35 @@ predicts and the server corrects (engine-stock + Vk RPCs).
 Input comes from gamepad / VR controllers / HOTAS (`engine/03-input-peripherals.md`):
 the controller maps axes (pitch/roll/yaw/throttle) into the movement component.
 
+## Flight model — parameters (E2)
+
+The 6-DoF flight model's **tunable parameter set** (property names recovered;
+the float *values* are balance data in the pak, out of scope). This describes
+*how* the model works:
+
+- **Linear:** `BaseSpeed`/`BaseSpeedUU`, `AccelerationRate`/`Acceleration`
+  (+ `AccelerationDifferenceTriggerAmount`). Speed-based, accelerates toward a
+  target speed.
+- **Rotation = torque-based with curves & constraints:** per-axis `Pitch`/`Yaw`/
+  `Roll` with `…MaximumTorque`, `…InterpCurve`/`…Curve`, `…Constraints`
+  (`PitchMax`/`PitchMin` clamp), `…AggressivenessPercentage`, `…Modulation`,
+  `…Invert` (invert option), `BaseTurnRate`, `AngularVelocity(Strength/Target)`.
+  So input drives torque through a response curve toward an angular-velocity
+  target, clamped to per-axis limits.
+- **Boost:** `BoostThrust`/`BoostSpeed`, `BoostEnergyUsagePerSecond`,
+  `BoostTime`/`BoostPercentage` — a timed speed/thrust burst drawing Energy.
+- **Brake:** `BrakeForceMaxScalar`, `BrakeAggressivenessPercentage`,
+  `BrakeEnergyUsagePerSecond`, `BrakeCooldownSeconds` — energy-gated, cooldowned.
+- **Energy pool (`EnergyComponent`):** a shared resource —
+  `EnergyRechargeAmountPerSecond`, `EnergyUsePerSecond`/`EnergyUseOnActivate`/
+  `EnergyRequired` — that **gates boost, brake, and abilities** (the `Energy`
+  replicated property, `08-*`; abilities in `gameplay/03`).
+- **Assist:** `DriftCorrection`/`DriftCorrectionPercentage` (auto drift-correct).
+
+This is an arcade-leaning 6-DoF model: curve-shaped torque rotation with clamps,
+a unified Energy budget for boost/brake/abilities, and drift assist. A re-impl
+server (same engine) runs it; the balance *values* live in the pak.
+
 ## Cockpit & launch (E1)
 
 - `VkCockpit` / `VkCockpitItem` / `VkCockpitAssetGroup` — the in-ship cockpit
