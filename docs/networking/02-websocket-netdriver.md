@@ -64,9 +64,18 @@ server          : spawn player; NMT_NetGUIDAssign for object-ref GUIDs
 
 - **Version gate:** `EngineNetworkVersion` + `GameNetworkVersion` must match
   (UE 4.14.3 / CL 3195953, `engine/01-*`) or the handshake aborts.
-- **Vk seam:** the backend **join token** (from battle-server allocation, `05-*`)
-  rides in `NMT_Login`'s options/URL or the `UniqueNetId` payload — the one
-  app-level check layered on the stock flow. Confirm exact placement by capture.
+- **Vk seam — capability-token connection auth (E2):** the battle connection
+  (`ConnectToBattle` / `eOnConnectingToServer_Event`) is authorized by a
+  **capability-token** system, not a bare string: fields `AuthTokenTBS`/
+  `AuthTokenTBE` and `CapTokenData`/`CapTokenSeq`/`CapTokenTBS`/`CapTokenTBE`/
+  `CapTokenTBEX` (TBS = *to-be-signed*, TBE = *to-be-encrypted*) — i.e. a signed
+  (and partly encrypted) capability token with a sequence number. This is the
+  app-level join authorization layered on UE4's `NMT_Login` (the token rides in
+  the login options / `UniqueNetId` payload). These are USTRUCT/UPROPERTY
+  reflection field names (no direct code xref), so the **exact wire layout and
+  signing** need a capture or deeper struct RE — but the *mechanism* is a
+  signed capability token (`CapToken`), consistent with CCP/Carbon platform tech.
+  A re-impl battle server validates this token to admit the client.
 - Everything else is documented UE 4.14 behaviour; a re-impl built on the same
   engine inherits it. Reuse the public engine to satisfy the handshake.
 
