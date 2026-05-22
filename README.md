@@ -34,5 +34,22 @@ Start at **`docs/00-INDEX.md`** — every doc carries a token-saver YAML header
 
 ## Status
 
-Early. Networking architecture mapped from binary metadata; protocol details
-in progress. See `docs/00-INDEX.md` for per-area status.
+Networking documented **end-to-end at the interface level** from static
+analysis of the shipped client (no live servers exist). Covered:
+
+- **Auth** — OAuth2 / CCP SSO, `steam_ticket`/Oculus/`refresh_token` grants, JWT.
+- **Environments** — Tranquility (prod) + Chaos/Havoc (test); SSO + VGS hosts.
+- **REST (VGS)** — `{version}/valkyrie/...` namespace, query params, snake_case
+  JSON object model with HATEOAS `*_uri` links; consolidated in
+  `docs/networking/schemas/vgs-rest.md`.
+- **Matchmaking** — UE4 PartyBeacon reservation protocol; dedicated battle-server
+  launch contract; reconnect + heartbeat.
+- **Realtime** — UE4 `WebSocketNetDriver` (libwebsockets) replication + RPC surface.
+- **OSS & telemetry** — custom `OnlineSubsystemVk`; Epic DataRouter (non-essential).
+- **Lifecycle & roadmap** — `eConnectionState` machine + prioritized re-impl plan.
+
+**Remaining** unknowns are wire-level (exact remaining paths, full JSON schemas,
+JWT signing key, WebSocket subprotocol) — they need live capture / dynamic
+analysis, planned in `docs/methodology/traffic-capture-plan.md`.
+
+See `docs/00-INDEX.md` for the full catalogue and per-area status.
