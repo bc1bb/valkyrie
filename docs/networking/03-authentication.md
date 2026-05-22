@@ -100,10 +100,16 @@ token. **Token format: JWT** — confirmed by the dedicated-server `-JWT=` launc
 arg (see `05-battle-server-launch.md`); a re-implemented SSO should mint JWTs.
 The signing algorithm and validation key remain to be determined.
 
-**`client_id` not in static strings (E2 negative result):** `client_id` appears
-only as a request *field name* — no literal client_id/secret VALUE is embedded
-as a recoverable string. So the OAuth client credential is either a compiled-in
-constant (raw bytes in `.text`/`.rdata`, not a tidy string) or assembled at
-runtime. Recovering it needs the dynamic/gdb path
-(`methodology/traffic-capture-plan.md`), or derivation from a captured
-`Authorization: Basic …` header on the token request.
+**`client_id` RECOVERED (E3, disassembly):** the OAuth `client_id` is
+**`valkyrieClient`**. Recovered by disassembling the Basic-auth construction
+(`disasm_func.py` @ ~`0x1420c0100`): the routine loads `"valkyrieClient"`,
+formats `"%s:%s"` (client_id:client_secret), base64-encodes it, and prepends
+`Basic ` → `Authorization: Basic base64("valkyrieClient:<secret>")`.
+
+**`client_secret` is empty / public-client (E3):** the second `%s` (secret)
+defaults to the empty-string sentinel and **no client_secret string exists**
+anywhere in the binary (searched 116k+ strings). So the credential is
+effectively `valkyrieClient:` (empty secret) — a **public OAuth client**, normal
+for the ticket/password grants here. (If a secret is injected at runtime from
+config, it isn't compiled in; treat the client as public.) A re-implemented SSO
+should accept `client_id=valkyrieClient` with no/empty secret.

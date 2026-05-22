@@ -137,9 +137,8 @@ to resolve the remaining wire-level unknowns (below). See
   offer/purchase. Field sets + grouping sufficient to scaffold a re-impl.
 - Remaining: exact value types / deep nesting per object — best finalized by one
   captured response each (E4); all hosts dead except the eveonline.com edge.
-- ~~OAuth client_id/secret values~~ → **reclassified nice-to-have** (`13-*`): a
-  re-implemented SSO defines its own client-credential policy, so CCP's original
-  values aren't needed to restore play. Basic-auth requirement is confirmed (E4).
+- ✅ **OAuth client_id RECOVERED (E3): `valkyrieClient`**, client_secret empty
+  (public client) — via disassembly of the Basic-auth construction (`03-*`).
 - JWT signing algorithm + validation key (server-side trust anchor).
 - How the active environment (TQ/Chaos/Havoc) is selected at runtime
   (NOT `-tq/-chaos/-havoc`; those were host-string substrings, debunked).
