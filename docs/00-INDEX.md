@@ -23,6 +23,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 6. `networking/02-websocket-netdriver.md` — realtime gameplay replication transport.
 7. `networking/03-authentication.md` — OAuth2 / CCP SSO login handshake.
 8. `networking/04-backend-environments.md` — host topology (TQ/Chaos/Havoc).
+9. `networking/05-battle-server-launch.md` — dedicated server launch contract.
 
 ## Catalogue
 
@@ -36,6 +37,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/02-websocket-netdriver.md` | net | draft | UE4 HTML5Networking WebSocketNetDriver over libwebsockets. |
 | `networking/03-authentication.md` | net | draft | OAuth2 via CCP SSO; steam_ticket/oculus/refresh grants; Bearer token, scopes. |
 | `networking/04-backend-environments.md` | net | draft | TQ (prod) + Chaos/Havoc (test) host topology; SSO + VGS API hosts. |
+| `networking/05-battle-server-launch.md` | net | draft | Dedicated server launch args: -BATTLEID/-BATTLESERVER_URI/-JWT/teams/AI. |
 
 ## Evidence base so far
 
@@ -49,13 +51,18 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
   (+ Chaos/Havoc test envs). See `networking/04-backend-environments.md`.
 - ✅ Auth flow: OAuth2, custom `steam_ticket` / Oculus `password` /
   `refresh_token` grants → Bearer token. See `networking/03-authentication.md`.
+- ✅ Token format: **JWT** (per `-JWT=` server arg). Signing key still unknown.
+- ✅ Battle-server launch contract: per-match dedicated server via `-BATTLEID`,
+  `-BATTLESERVER_URI`, `-JWT`, team/AI/rank args. See `networking/05-*`.
+- ✅ Client launch overrides: `-SSOTOKEN=`, `-offline`/`-online` confirmed.
 
 ## Open questions (tracked, not yet answered)
 
 - Exact REST paths, HTTP verbs, JSON schemas per `Vk*Resource`.
 - OAuth `client_id`/`client_secret` and whether token endpoint needs Basic auth.
-- Token format (JWT vs opaque) and how downstream services validate it.
-- How the active environment (TQ/Chaos/Havoc) is selected at runtime.
+- JWT signing algorithm + validation key (server-side trust anchor).
+- How the active environment (TQ/Chaos/Havoc) is selected at runtime
+  (NOT `-tq/-chaos/-havoc`; those were host-string substrings, debunked).
 - WebSocket handshake subprotocol and message framing for replication.
-- Matchmaking/battle-server allocation handshake (Plane 1 → Plane 2 seam).
+- `-BATTLESERVER_URI=` exact scheme/host/port/path.
 - TLS cert pinning behaviour (affects DNS-redirect feasibility).

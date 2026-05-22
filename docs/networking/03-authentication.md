@@ -93,5 +93,6 @@ login with optional 2FA), in addition to the platform-ticket grants above.
 A replacement SSO need only: accept `POST /oauth/token` with the three grant
 types, validate (or stub) the platform ticket, and return a signed Bearer token
 + refresh token carrying the three scopes. Downstream services must accept that
-token. Token format (JWT vs opaque) is not yet confirmed — capture or static
-analysis of the validation path is the next step.
+token. **Token format: JWT** — confirmed by the dedicated-server `-JWT=` launch
+arg (see `05-battle-server-launch.md`); a re-implemented SSO should mint JWTs.
+The signing algorithm and validation key remain to be determined.
