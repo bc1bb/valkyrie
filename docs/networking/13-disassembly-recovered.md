@@ -132,6 +132,55 @@ proving_grounds_reward_name
 So the end-of-match payload itemizes the score math and the capsule/loot grants
 (consistent with `11-*`). A re-impl returns this object after `battle_completed`.
 
+## Common response envelope (NEW, E3)
+
+The fields `verb`, `uri`, `content`, `message` recur across multiple parse
+routines (squad, session-request, others). This indicates a **common response
+envelope** wrapping each resource:
+```
+{ "uri": <self link>, "verb": <method>, "message": <status/info>,
+  "content": { ...the actual resource object... } }
+```
+So clients read `content` for the resource and use `uri`/`verb` for the next
+HATEOAS hop. A re-impl should wrap responses in this envelope. (Auth/signup
+responses also carry `token`/`provider`/`signup` at this level.)
+
+## Squad object — recovered (E3)
+
+Anchor `squad_leader_callsign`:
+```
+# envelope: verb, uri, content, message, token, provider, signup
+squad_uri, squad_version, squad_leader_id, squad_leader_callsign, invites,
+squad_join_uri,
+# the squad's matchmaking context (current/last):
+game_mode, status, is_joinable, session_id, battleserver_id,
+min_pilot_rank, max_pilot_rank
+```
+
+## Leaderboard entry — recovered (E3)
+
+Anchor `instance_name` region (leaderboard parse):
+```
+pilots[ { pilot_id, callsign, platform,
+          rank, position, points, kills, kd_ratio,
+          league_position, league_score,
+          battles, battles_required } ]
+```
+
+## Challenge object — recovered (E3)
+
+Anchor `challenge_url`:
+```
+active_challenges[ { challenge_id, challenge_name, difficulty_name,
+                     challenge_url, progress, rewards:{type,amount},
+                     ship_name, cosmetic_type_name, cosmetic_name,
+                     # objective thresholds:
+                     max_kills/max_assists/max_captures/max_pvp_kills/
+                     max_points/max_drone_kills/max_emps/max_repairs/
+                     max_node_kills/max_kd } ],
+challenges_ended_recently
+```
+
 ## Value
 
 The disassembly method is now proven and can be pointed at any `Vk*Resource`

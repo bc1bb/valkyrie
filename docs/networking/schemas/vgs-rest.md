@@ -33,6 +33,8 @@ full-surface   = see networking/14-vgs-api-surface.md (resources/fields/taxonomi
 ## Conventions
 
 ```
+envelope   : responses wrap the resource in a common envelope (E3, 13-*):
+             { uri, verb, message, content:{...resource...} } ; read `content`.
 hypermedia : responses embed *_uri fields; client follows them (HATEOAS).
              => server controls paths; don't assume hardcoded routes.
 paging     : offset + limit (and/or page + page_size); count returned.
