@@ -66,6 +66,24 @@ This is the realization of the Plane-1 → Plane-2 seam (`00-architecture.md`):
 4. Backend returns the server's address (+ a client join token) to the client.
 5. Client connects (Plane 2 WebSocket NetDriver) and the match runs.
 
+## Hosting: AWS GameLift (E2)
+
+The dedicated battle servers run on **Amazon GameLift** (managed dedicated-server
+fleet hosting). Evidence: `AVkGameMode_GameLift`, **`GameLiftServerSDK`** linked
+in, and a configurable port range `MinGameLiftPort`/`MaxGameLiftPort`. So the
+original `VkBattleServerResource` allocation (`01-*`) was backed by GameLift:
+the backend requests a game session from a GameLift fleet, GameLift launches the
+server process on a fleet host (with the launch args in this doc), the server
+calls the GameLift Server SDK to register/activate, and GameLift returns the
+host IP + port.
+
+**Preservation implication:** a private re-implementation does **not** need
+GameLift — it can launch the shipped server binary directly (the launch
+contract above) and feed the client the resulting `public_ip`+`port` via
+`VkBattleServerResource`. The GameLift SDK calls on the server side can be
+stubbed/ignored (or the `-server` binary may run without them). GameLift is just
+how CCP *operated* the fleet, not a client-side requirement.
+
 ## Battle lifecycle reporting (server → backend, E2/E3)
 
 Once running, the dedicated server reports match lifecycle to the backend via

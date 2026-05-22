@@ -75,6 +75,10 @@ a re-implementer; this INDEX is the full catalogue.
 | `gameplay/03-abilities.md` | gameplay | draft | Abilities/ultimates/buffs: VkAbility_*/VkUltimate_* rosters, activation/cooldown lifecycle, per-ability state machines, loadout slots. |
 | `gameplay/04-mode-mechanics.md` | gameplay | draft | Mode mechanics: capture points, carrier-assault state machine, relics, clone-vat respawn, teams, MatchSettings→game_mode_settings mapping. |
 | `gameplay/05-vr-ui.md` | gameplay | draft | VR UI/HUD: diegetic cockpit HUD (radar/brackets/crosshair), head-selectable front-end framework, smart-pings (networked), AVkUIGameState bridge. |
+| `gameplay/06-pilot-loadout.md` | gameplay | draft | Client loadout/customization: EVkInventorySlot, hero-ship/cosmetic/upgrade/implant model, local persistence; consumes backend (networking/11). |
+| `gameplay/07-brackets.md` | gameplay | draft | NEGATIVE finding: no tournament-bracket system; "brackets" = HUD reticles. Competitive = leagues/leaderboards. |
+| `gameplay/08-framework.md` | gameplay | draft | Framework glue: Vk GameInstance/GameMode/GameState triad (incl. GameLift mode), VkCore, FVkJsonObject, client static-data binding. |
+| `gameplay/09-spectator.md` | gameplay | draft | Spectator system: pawn/HUD/camera, server-authoritative view-target flow, showfloor/kiosk; KillCam=clone-vat screen; no replay system. |
 
 ## Phase status
 

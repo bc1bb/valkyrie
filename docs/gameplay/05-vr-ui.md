@@ -71,9 +71,11 @@ system (RPCs, below). Interaction model details:
 | `AVkLockOnBeamCrosshair`, `AVkMissileCrosshair` | Weapon-specific crosshair variants (lock-on beam, missiles). |
 
 The bracket/leading/lock widgets are tightly coupled to the combat & weapon
-systems (`02-combat.md`, planned). `VkBracketEditorActor` / the tournament-bracket
-side (`FVkBracketElementStructType`) is a *different* "bracket" (tournament
-ladders) and belongs to the planned `07-brackets.md`, not the HUD here.
+systems (`02-combat.md`). Note: **all** `Vk*Bracket*` symbols here are HUD
+reticles/markers — `VkBracketEditorActor` is a design-time **HUD-layout** actor
+and `FVkBracketElementStructType` is a HUD element-type tag (verified in
+`07-brackets.md`). There is **no** tournament/competition-bracket system in this
+title; competitive structure is leagues/leaderboards (`networking/11`, `14`).
 
 ## Smart pings / comms (E1/E2) — the networked UI element
 
