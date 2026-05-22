@@ -214,6 +214,29 @@ Taking enough damage forces a cloaked ship to decloak: `DecloakDamageThreshold`
 the abilities subsystem, `03-abilities.md` planned; see also `engine/07-*` for
 the AI ability roster.)
 
+## Combat parameters (E2)
+
+Tunable property names (values are balance/pak, out of scope) — deepening the
+damage model:
+- **Damage channels** (separate pools; cf. `OnRep_` shield/energy in
+  `networking/08`): **Shield** (`ShieldAmount`/`ShieldBuffAmount`; break cycle
+  `ShieldDownTime`→`ShieldReplenishDelay`→`ShieldRearmTime`), **Armour**
+  (`ArmourBuffAmount`, `ArmourRepairRate`, `ArmourDamage`), **Hull** (`HullAmount`,
+  `HullRepair`, `HullDamage`; collision via `HullCollisionEvent`/`HullScrape*`),
+  plus **Energy** (`gameplay/01`). Shields regen after a delay; armour/hull repair
+  at a rate.
+- **Damage typing:** `DamageModifiersPerType`(`Map`), `DamageMultiplier`,
+  `DamageFalloff`, `DamagePerSecond` — damage scaled by a per-type modifier map
+  and range falloff (with `EVkTargetZone` / marked-target modifiers).
+- **Weapons:** cooldown (`CooldownDuration`/`CooldownRemaining`), **heat**
+  (`HeatGainPerSecond` — overheating), `DamageAmount`, `DamageRadius` (splash);
+  crosshair reflects heat/cooldown (`EVkCrosshairMeshState`).
+
+So the damage model is **stacked pools** (Shield→Armour→Hull, + Energy for
+abilities) with per-type modifiers, range falloff, regen/repair timers, and
+heat-limited weapons. A re-impl server applies damage through this pipeline; the
+numeric tuning lives in the pak.
+
 ## Re-implementation / preservation relevance
 - The **entire combat resolution runs on the dedicated server binary** (fire
   gating, hit/`NumHits` reconciliation, multi-channel damage, hit-point/critical
