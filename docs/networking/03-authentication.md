@@ -98,7 +98,16 @@ types, validate (or stub) the platform ticket, and return a signed Bearer token
 + refresh token carrying the three scopes. Downstream services must accept that
 token. **Token format: JWT** — confirmed by the dedicated-server `-JWT=` launch
 arg (see `05-battle-server-launch.md`); a re-implemented SSO should mint JWTs.
-The signing algorithm and validation key remain to be determined.
+
+**JWT internals are NOT in the client (E2/E3 — opaque token):** the client
+treats `access_token` as an opaque **Bearer** credential — it does not decode or
+validate the JWT (no `HS256`/`RS256`, base64url token-decode, or claim-name
+handling in the binary; only the `-JWT` arg + `Bearer` usage exist). So the JWT
+**claims and signing key were backend-internal** (validated by CCP's now-dead
+VGS services) and aren't recoverable from the client — **nor needed**: a
+re-implementation controls both token *minting* (its SSO) and *validation* (its
+services + the dedicated server it runs), so it defines its own claims/algorithm/
+key. The only hard requirement is that the *same* re-impl key signs and verifies.
 
 **`client_id` RECOVERED (E3, disassembly):** the OAuth `client_id` is
 **`valkyrieClient`**. Recovered by disassembling the Basic-auth construction
