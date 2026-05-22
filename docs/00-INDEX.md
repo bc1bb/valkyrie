@@ -41,6 +41,7 @@ a re-implementer; this INDEX is the full catalogue.
 
 | Doc | Area | Status | Summary |
 |-----|------|--------|---------|
+| `STATUS.md` | status | living | **Start here** — whole-project confidence map (evidence tiers, blocking-vs-done, next actions). |
 | `methodology/clean-room.md` | method | draft | Clean-room rules, evidence tiers, what may enter the repo. |
 | `methodology/traffic-capture-plan.md` | method | draft | How to get E4 wire evidence via DNS redirect + TLS-terminating loopback stub. |
 | `engine/01-engine-identification.md` | engine | verified | UE 4.14.3, codename Vk, module list, third-party libs. |

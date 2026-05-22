@@ -16,6 +16,12 @@ model: replicated properties + Server/Client/Multicast RPCs. The RPC names below
 (E2) describe the gameplay contract. Names with `_Implementation` suffixes are
 UE4's generated RPC bodies.
 
+> **Full inventories (reference):** the categorized sample below covers the
+> notable RPCs; the **complete** RPC list (~170 Server / ~120 Client / ~10
+> Multicast, + the `_Validate` server-validation pattern) is in
+> `reference/rpcs.md`, and the full replicated-property + enum indexes are in
+> the *Replicated properties* section here and `reference/enums.md`.
+
 ## Movement (engine-stock UE4 CharacterMovement, E5)
 
 `ServerMove`, `ServerRotation`, `ServerVelZ`, `ServerBase`, `ServerTimeStamp` /
