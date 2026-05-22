@@ -13,6 +13,12 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 `summary` + `keywords` first; only open the body if relevant. `status` ∈
 {stub, draft, verified, living}.
 
+## Start here
+
+**`STATUS.md`** — preservation status & confidence map (what's known at what
+evidence tier, what's blocking, prioritized next actions). Best entry point for
+a re-implementer; this INDEX is the full catalogue.
+
 ## Reading order
 
 1. `methodology/clean-room.md` — rules everyone must follow.
