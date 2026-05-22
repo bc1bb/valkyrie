@@ -38,19 +38,27 @@ Start at **`docs/00-INDEX.md`** — every doc carries a token-saver YAML header
 Networking documented **end-to-end at the interface level** from static
 analysis of the shipped client (no live servers exist). Covered:
 
-- **Auth** — OAuth2 / CCP SSO, `steam_ticket`/Oculus/`refresh_token` grants, JWT.
-- **Environments** — Tranquility (prod) + Chaos/Havoc (test); SSO + VGS hosts.
-- **REST (VGS)** — `{version}/valkyrie/...` namespace, query params, snake_case
-  JSON object model with HATEOAS `*_uri` links; consolidated in
-  `docs/networking/schemas/vgs-rest.md`.
+- **Auth** — OAuth2 / CCP SSO; `steam_ticket`/Oculus/`refresh_token` grants; JWT.
+  **Verified live (E4):** `login.eveonline.com/oauth/token` still answers,
+  POST-only, requires HTTP Basic client auth (401 unauthenticated).
+- **Environments / DNS** — Tranquility (prod) + Chaos (test) DNS still resolve;
+  the real backend domain `valkyrieapi.com` is **NXDOMAIN** (gone). Multi-tenant
+  URLs `{tenant}.valkyrieapi.com`.
+- **REST (VGS)** — full resource/path surface, query params, HTTP verbs, and the
+  **complete JSON object model recovered via disassembly** (12 objects + the
+  `{uri,verb,message,content}` envelope). Consolidated in
+  `docs/networking/schemas/vgs-rest.md`; full surface in `…/14-vgs-api-surface.md`.
 - **Matchmaking** — UE4 PartyBeacon reservation protocol; dedicated battle-server
-  launch contract; reconnect + heartbeat.
+  launch contract + lifecycle reporting (`FVkBattlesResource`); reconnect + heartbeat.
 - **Realtime** — UE4 `WebSocketNetDriver` (libwebsockets) replication + RPC surface.
-- **OSS & telemetry** — custom `OnlineSubsystemVk`; Epic DataRouter (non-essential).
-- **Lifecycle & roadmap** — `eConnectionState` machine + prioritized re-impl plan.
+- **OSS / telemetry / watchdog** — custom `OnlineSubsystemVk`; Epic DataRouter
+  (non-essential); a local Watchdog process (`127.0.0.1:8080`).
+- **Lifecycle & build** — `eConnectionState` machine; prioritized roadmap; an
+  actionable **MVP server build guide** (`docs/reimpl/01-mvp-server-guide.md`).
 
-**Remaining** unknowns are wire-level (exact remaining paths, full JSON schemas,
-JWT signing key, WebSocket subprotocol) — they need live capture / dynamic
-analysis, planned in `docs/methodology/traffic-capture-plan.md`.
+**Remaining** unknowns are narrow: exact value types / deep object nesting and
+the WebSocket subprotocol — needing one live capture per resource (E4), planned
+in `docs/methodology/traffic-capture-plan.md`. The client-credential **values**
+aren't required (a re-implemented SSO sets its own policy).
 
 See `docs/00-INDEX.md` for the full catalogue and per-area status.
