@@ -44,6 +44,9 @@ Analytics use Unreal's **`AnalyticsProviderET`** ("ET" = Epic Telemetry),
 posting events to **Epic's DataRouter**:
 
 - Endpoint: `https://datarouter.ol.epicgames.com/datarouter/api/v1/public/data`
+- Query params: `SessionID`, `AppID`, `AppVersion`, `UserID`, `AppEnvironment`,
+  `UploadType` (e.g. `?SessionID=…&AppID=…&AppEnvironment=…`). `AppEnvironment`
+  carries the build's environment label (e.g. `Production`).
 - Configured via `APIKeyET` (app key) + `APIServerET` (server URL) settings;
   the client errors if either is empty (`AnalyticsET: APIKey ... cannot be empty`).
 - This is **separate from the game backend** — it is Epic's standard UE4
