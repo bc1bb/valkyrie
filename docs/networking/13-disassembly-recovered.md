@@ -101,6 +101,37 @@ grouping (links vs collections vs scalars) is reliable; precise object nesting
 (which collection sits under which key) still benefits from one captured
 response (E4). It directly fills step 3.3 of the build guide (`reimpl/01-*`).
 
+## Session object — recovered (E3)
+
+Anchor `owner_callsign` → session parse routine:
+```
+session_uri, pilots_uri,                       # self + players link
+max_pilots, current_players,                   # player capacity
+max_spectators, current_spectators,            # spectator capacity
+owner_callsign, owner_platform,                # host identity
+in_progress,                                   # state flag
+custom_settings                                # nested game-mode toggles (14-*)
+```
+(Plus a `vkpilot` ref — likely a nested pilot summary per slot.) This is the
+matchmaking result object the client reads to show/join a session.
+
+## Post-battle rewards object — recovered (E3)
+
+Anchor near `host_pilot_ids` → the rewards parse routine (driven by `MatchEnded`,
+`05-*`):
+```
+# score breakdown
+base, bonus, boost, event,
+old_score, new_score,                          # rank-score delta
+first_win,                                     # first-win bonus flag/amount
+# grants
+loot, loot_score_capsules,
+reputation_capsules, challenge_capsules,
+proving_grounds_reward_name
+```
+So the end-of-match payload itemizes the score math and the capsule/loot grants
+(consistent with `11-*`). A re-impl returns this object after `battle_completed`.
+
 ## Value
 
 The disassembly method is now proven and can be pointed at any `Vk*Resource`
