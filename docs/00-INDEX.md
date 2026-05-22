@@ -71,6 +71,10 @@ a re-implementer; this INDEX is the full catalogue.
 | `reimpl/01-mvp-server-guide.md` | reimpl | draft | **Actionable build walkthrough**: redirect→SSO→pilot→staticdata→matchmaking→battle server→in-match→keepalive; what to stub. |
 | `gameplay/00-overview.md` | gameplay | living | Gameplay systems map (VkGame ~1562 classes) — entry point for whole-game RE. |
 | `gameplay/01-player-ship-control.md` | gameplay | draft | Player/ship control (controller/pawn/vehicle/movement/cockpit/launch) + full scoring-event taxonomy. |
+| `gameplay/02-combat.md` | gameplay | draft | Combat: weapon taxonomy/firing, projectiles vs lock-on missiles, turrets, multi-channel damage model, hit/critical points, shields, explosions; firing RPCs. |
+| `gameplay/03-abilities.md` | gameplay | draft | Abilities/ultimates/buffs: VkAbility_*/VkUltimate_* rosters, activation/cooldown lifecycle, per-ability state machines, loadout slots. |
+| `gameplay/04-mode-mechanics.md` | gameplay | draft | Mode mechanics: capture points, carrier-assault state machine, relics, clone-vat respawn, teams, MatchSettings→game_mode_settings mapping. |
+| `gameplay/05-vr-ui.md` | gameplay | draft | VR UI/HUD: diegetic cockpit HUD (radar/brackets/crosshair), head-selectable front-end framework, smart-pings (networked), AVkUIGameState bridge. |
 
 ## Phase status
 
