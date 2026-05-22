@@ -35,13 +35,40 @@ instead uses **WebSockets over TCP**. Implications for a server re-impl:
 ## UE4 replication model carried inside (E5 — engine-stock)
 
 Inside the WebSocket byte stream, UE4 framing is standard for 4.14:
-- **Connection** → **Control channel** (channel 0) handshake: `NMT_Hello`,
-  `NMT_Challenge`, `NMT_Login`, `NMT_Welcome`, `NMT_Join` control messages.
+- **Connection** → **Control channel** (channel 0) handshake (below).
 - **Actor channels** carry property replication + RPC "bunches".
 - **Packages/GUIDs**: the client and server must agree on the loaded map and
   package versions; mismatches are rejected at the control-channel handshake.
 
-These are documented UE 4.14 behaviours; reuse the public engine to satisfy them.
+### Control-channel handshake (UE 4.14, engine-stock)
+
+Control-message types **confirmed present in the binary (E2):** `NMT_Login`,
+`NMT_Failure`, `NMT_JoinSplit`, `NMT_NetGUIDAssign`, `NMT_DebugText`, plus
+`Hello`/`Challenge`/`Welcome` and `NetworkVersion`/`EngineNetworkVersion`/
+`GameNetworkVersion`. The full stock 4.14 sequence (E5) a re-impl server must
+speak:
+
+```
+client → server : NMT_Hello   (IsLittleEndian, RemoteNetworkVersion)
+server          : validate version → on mismatch NMT_Upgrade/NMT_Failure
+                  (=> ENetworkFailure::OutdatedClient/Server, 09-*)
+server → client : NMT_Challenge (nonce string)
+client → server : NMT_Login    (challenge response, request URL/options,
+                                 UniqueNetId from OnlineSubsystemVk, + join token)
+server          : auth/capacity OK?
+server → client : NMT_Welcome  (map/gamemode/redirect)  | NMT_Failure
+client           : load map; NMT_Netspeed; then
+client → server : NMT_Join      (or NMT_JoinSplit for splitscreen)
+server          : spawn player; NMT_NetGUIDAssign for object-ref GUIDs
+```
+
+- **Version gate:** `EngineNetworkVersion` + `GameNetworkVersion` must match
+  (UE 4.14.3 / CL 3195953, `engine/01-*`) or the handshake aborts.
+- **Vk seam:** the backend **join token** (from battle-server allocation, `05-*`)
+  rides in `NMT_Login`'s options/URL or the `UniqueNetId` payload — the one
+  app-level check layered on the stock flow. Confirm exact placement by capture.
+- Everything else is documented UE 4.14 behaviour; a re-impl built on the same
+  engine inherits it. Reuse the public engine to satisfy the handshake.
 
 ## Vk-specific seams to determine (open questions)
 
