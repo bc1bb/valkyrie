@@ -237,6 +237,15 @@ abilities) with per-type modifiers, range falloff, regen/repair timers, and
 heat-limited weapons. A re-impl server applies damage through this pipeline; the
 numeric tuning lives in the pak.
 
+## Aim assist (E2)
+
+A distance-scaled **aim-assist** aids targeting (gamepad/VR): `AimAssistMinDistance`/
+`AimAssistMaxDistance` (the band where assist applies) and `AimAssistAngleByDistance`
+(assist strength/angle scales with target range), plus `AimAdjust`/`AimOffset`.
+This is a client-side aiming aid; the server stays authoritative on hit
+resolution (`ServerNumHits`/`ClientNumHits` reconciliation). A re-impl keeps it
+client-local — it affects feel, not server-side fairness.
+
 ## Re-implementation / preservation relevance
 - The **entire combat resolution runs on the dedicated server binary** (fire
   gating, hit/`NumHits` reconciliation, multi-channel damage, hit-point/critical
