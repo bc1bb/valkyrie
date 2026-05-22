@@ -235,6 +235,18 @@ element types `TOGGLE`/`NUMBER`/`PERCENT`/`DURATION`/`LIST`) confirm the binding
 | `num_ai_per_team`, `ai_difficulty` | AI count / difficulty | (Survival/PvE, `bSurvival_IsProMode`) |
 | `disable_shields`, `no_radar`, `friendly_fire`, `no_ultimates`, `no_mods` | global rule toggles | `CustomMatchSettings_Option{Enabled,Disabled}` |
 
+## Challenges (client objective tracking)
+
+Challenges are meta objectives ("do X for a reward"), distinct from match win
+conditions. Client side: `VkChallengeObjective` tracks progress against criteria
+`EVkChallengeModeSuccessCriteria` (AllObjectivesCompleted / AllTagged… /
+AnyTagged…) and `EVkChallengeModeTimerStartCondition` (OnLaunchFinished /
+OnAnyObjectiveCompleted / OnTaggedObjectiveCompleted) — see `engine/04-*`.
+Definitions/progress/rewards come from the backend `challenges` resource
+(`networking/14-*`: `challenge_id`/`name`/`difficulty_name`/`progress`/`rewards`/
+objective `max_*` thresholds). A re-impl backend serves challenge definitions
+and accepts progress/completion; the client evaluates criteria locally.
+
 ## Re-implementation relevance
 
 - **All of this is server-side** and ships in the game binary; a re-implemented
