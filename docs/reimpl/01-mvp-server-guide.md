@@ -61,8 +61,8 @@ All under `{version}/valkyrie/…`, `Authorization: Bearer <JWT>`,
 follows). Return 401 on expired token to trigger refresh (`01-*`); tolerate
 missing fields (client uses `FVkJsonObject`, `13-*`).
 
-**Wrap every response in the envelope** (`13-*`):
-`{ "uri": <self>, "verb": <method>, "message": "", "content": { <object> } }`
+**Wrap every response in the envelope** (`13-*`, E3-verified):
+`{ "uri": <self>, "verb": <method>, "status": <ok>, "message": "", "content": { <object> } }`
 — the client reads `content`. Concrete object shapes for `content` are recovered
 in `13-*` / catalogued in `schemas/vgs-rest.md`; the P0 ones:
 

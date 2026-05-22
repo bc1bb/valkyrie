@@ -134,13 +134,16 @@ So the end-of-match payload itemizes the score math and the capsule/loot grants
 
 ## Common response envelope (NEW, E3)
 
-The fields `verb`, `uri`, `content`, `message` recur across multiple parse
-routines (squad, session-request, others). This indicates a **common response
-envelope** wrapping each resource:
+The fields `verb`, `uri`, `content`, `message`, `status` recur across multiple
+parse routines (squad, session-request, others). **Verified (E3):** in `.rdata`
+these names are stored **adjacently** (the `uri`/`verb`/`content`/`status`
+grouping recurs at ≥2 sites), the field-constant layout a compiler emits for a
+single struct — confirming a **common response envelope** wrapping each resource:
 ```
-{ "uri": <self link>, "verb": <method>, "message": <status/info>,
-  "content": { ...the actual resource object... } }
+{ "uri": <self link>, "verb": <method>, "status": <code/state>,
+  "message": <info>, "content": { ...the actual resource object... } }
 ```
+(In auth/signup responses the envelope also carries `token`/`provider`/`signup`.)
 So clients read `content` for the resource and use `uri`/`verb` for the next
 HATEOAS hop. A re-impl should wrap responses in this envelope. (Auth/signup
 responses also carry `token`/`provider`/`signup` at this level.)
