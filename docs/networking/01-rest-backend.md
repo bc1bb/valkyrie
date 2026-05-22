@@ -54,6 +54,13 @@ session/battle-server allocation chain (`VkSessionRequestResource` →
 `VkSessionResource` → `VkBattleServerResource`). Cosmetics/store/loot are
 non-blocking for playability and can return empty/stub payloads initially.
 
+## Virtual goods purchase states (`EInAppPurchaseState`, E2)
+
+`VkVirtualGoods` / `VkLootCapsuleResource` transactions resolve into a UE4
+purchase-state enum: `Success`, `Failed`, `Cancelled`, `Invalid`, `NotAllowed`,
+`AlreadyOwned`, `Restored`, `Unknown`. A re-implemented store must drive
+transactions to one of these terminal states (engine-stock semantics).
+
 ## Known unknowns (to resolve by traffic capture / static analysis)
 
 - Base URL(s) and per-resource path templates.

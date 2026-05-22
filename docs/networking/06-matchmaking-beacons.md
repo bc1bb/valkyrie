@@ -34,10 +34,26 @@ the in-match replication connection.
 
 ### Reservation responses (`EPartyReservationResult`, E2/E5)
 
-`ReservationAccepted`, `ReservationDenied`, `ReservationDuplicate`,
-`ReservationFull`, `ReservationInvalid`, `ReservationNotFound`,
-`ReservationRequestCanceled`. These are the standard UE4 beacon result codes —
-a re-implemented host beacon must return them with the same semantics.
+Full result enum observed (a host beacon must return these with UE4 semantics):
+
+| Result | Meaning |
+|--------|---------|
+| `NoResult` | Initial / none yet. |
+| `RequestPending` | Reservation in flight. |
+| `RequestTimedOut` | No host response in time. |
+| `ReservationAccepted` | Slot(s) granted. |
+| `ReservationDenied` | Refused (generic). |
+| `ReservationDenied_Banned` | Refused — player banned (Vk-relevant policy hook). |
+| `ReservationDuplicate` | Already reserved. |
+| `ReservationNotFound` | No matching reservation (e.g. on update/cancel). |
+| `ReservationRequestCanceled` | Client withdrew the request. |
+| `IncorrectPlayerCount` | Party size invalid for the request. |
+| `PartyLimitReached` | Server/party capacity exceeded. |
+| `BadSessionId` | Session id unknown/invalid. |
+| `GeneralError` | Unspecified failure. |
+
+The connection itself is tracked by `EBeaconConnectionState`
+(`Pending → Open → Closed`, plus `Invalid`).
 
 ### Flow (E5, engine-stock semantics)
 
