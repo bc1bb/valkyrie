@@ -87,9 +87,13 @@ Core capture loop (method/field symbols):
 - Contest tracking: `ContestingActors` / `PreviousContestingActors`,
   `UpdateAllContestingActors`, `IsActorContesting`, and per-team tallies
   `NumContestingActors_Team0` / `_Team1`.
-- Rate: `GetNewCaptureRate` computes capture speed from the contesting tally
-  (this is what the backend `capture_speed` / `MatchSettings_CA_CaptureSpeed`
-  scales). `bDetectNeutrals` toggles whether non-team actors count.
+- Rate & geometry: `GetNewCaptureRate` computes capture speed from the contesting
+  tally (what the backend `capture_speed` / `MatchSettings_CA_CaptureSpeed`
+  scales); `CaptureDistanceMetres` / `CaptureDistanceScale` size the capture
+  volume. `bDetectNeutrals` toggles whether non-team actors count.
+- **Match timing params (E2):** `RoundTime`/`RoundTimer`/`TimeRemaining` (round
+  clock), `RespawnTime` (clone-vat respawn delay). Values are balance/pak;
+  `RoundTimer`/`ClonesPerTeam` map to `MatchSettings_*` (`networking/14`).
 - Outcome events: `OnCapturePointCaptured`, `AllCapturePointsOwnedAudio` /
   `AllCapturePointsLostAudio`, plus the scoring hooks
   `VkPlayerScoreObjective_Capture` (instant capture) and

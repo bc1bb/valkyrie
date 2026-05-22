@@ -90,6 +90,13 @@ These map to the `objective_*`/`Score_*` fields in the match-result report
 This taxonomy defines what the server scores during a match and reports to the
 backend (drives rewards, `networking/11-*`).
 
+**Scoring parameters (E2):** each event has a point value (values are balance/
+pak): `PointsForBossShip`, `PointsPerRing` (wormhole), `PointsPerSalvage`
+(salvage), `ScorePerLoot`, `ScorePerSuccessfulRepair`, `ScorePerSuccess`, plus a
+`Multiplier` (streak/bonus scaling) and `PointsRequirement` thresholds. The
+server awards these per scored event; totals feed the match-result report
+(`networking/13-*`) and rewards.
+
 ## Re-implementation / preservation relevance
 
 - A re-implemented **server** runs this logic (it ships in the binary); the
