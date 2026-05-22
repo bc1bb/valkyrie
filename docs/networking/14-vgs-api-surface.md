@@ -68,6 +68,25 @@ Common query params: `region=%s`, `&pilots=`, `?team=`, `&sortby=`,
 `leaderboard=`, `host_pilot_ids=%s`, `password=%s`, `?properties=`, `version=%s`,
 `&%s`, `%s=%s`.
 
+### HTTP verbs per resource (E3, approximate)
+
+Recovered by locating each path's request builder and reading the verb string
+loaded nearby (windows may include adjacent functions, so treat as the likely
+primary verb, not exhaustive):
+
+| Resource | Verb(s) | Note |
+|----------|---------|------|
+| `accounts` | GET | Fetch account. |
+| `pilots` / `pilot-status` | GET (+ POST) | Read pilot; POST for create/mutate ops. |
+| `sessions` | GET | Find/list sessions (matchmaking read). |
+| `leagues` | GET, DELETE | Read; DELETE likely "leave league". |
+| `notifications` | POST | Post/ack notifications (oculus channel). |
+| `client-event` | POST | Submit telemetry events. |
+| (session/state updates) | PUT | `PUT` seen in session-ish builders (`13-*`). |
+
+So the API uses the full GET/POST/PUT/DELETE set; a re-impl must route all four.
+Exact verb per endpoint is best confirmed by capture (E4).
+
 ## Pilot object — HATEOAS link graph
 
 Identity/state: `pilot_id`/`my_pilot_id`, `pilot_name`/`callsign`/`unique_name`,
