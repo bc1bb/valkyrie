@@ -83,6 +83,7 @@ a re-implementer; this INDEX is the full catalogue.
 | `gameplay/11-effects.md` | gameplay | draft | Effects driver (EffectManager command-list + subsystems) & animation drivers — code layer, not VFX assets. |
 | `gameplay/12-tacticalmap-comms.md` | gameplay | draft | Tactical map (clone-vat screen) + networked quick-chat (comm wheel/VO) + call-ins (EMP/OverShield/RepairBots). |
 | `gameplay/13-frontend-flow.md` | gameplay | draft | Front-end menu flow: 3 scene managers (Login/HUB/BattleCarousel), screen catalogue, navigation mapped to connection states + backend. |
+| `reference/enums.md` | reference | living | Enum/type lookup index (~116 EVk* enums) — name→purpose→doc; find which doc covers a given enum/state-machine. |
 
 ## Phase status
 
