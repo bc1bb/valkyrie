@@ -7,7 +7,11 @@
 ## What this repo IS
 
 - **Documentation only.** Prose descriptions of how the game works technically:
-  network architecture, backend protocol surface, engine layout, file formats.
+  network architecture, backend protocol surface, engine layout, gameplay
+  systems, file formats.
+- **Goal: the whole client RE'd and clean-room documented** — networking first
+  (now comprehensive), then the full gameplay/client architecture
+  (`docs/gameplay/`). Asset/content RE (the 30 GB pak) stays out of scope.
 - Produced under **clean-room principles** (see `docs/methodology/clean-room.md`).
 
 ## What this repo IS NOT
