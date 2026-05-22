@@ -91,6 +91,23 @@ UE4 beacon timeouts apply: `BeaconConnectionInitialTimeout` (handshake) and
 disconnect handling. A re-implemented host should honour these so the client's
 state machine progresses normally.
 
+## Squads / parties
+
+A **squad** (party) groups players who matchmake and reserve slots together.
+`VkSquadNode` is the squad data structure; an `IdleSquadMember`
+`eConnectionState` (`09-*`) marks a client idling as a non-leader squad member
+(the leader drives matchmaking; members follow into the reserved slots). The
+PartyBeacon `ReservationRequest` carries the whole party as one reservation,
+which is why `IncorrectPlayerCount` / `PartyLimitReached` are possible results.
+
+## Custom / private sessions
+
+A `CustomSession` / `custommatch` path exists for private/custom matches
+(distinct from public matchmaking). The `JoiningCarousel` state is the
+ship/loadout selection lobby entered before launch in either path. Custom
+sessions likely skip skill-based public matchmaking and let a leader invite a
+specific party, then allocate a battle server the same way (`05-*`).
+
 ## Re-implementation value
 
 The matchmaking/join handshake is **engine-stock UE4 PartyBeacon** — a private
