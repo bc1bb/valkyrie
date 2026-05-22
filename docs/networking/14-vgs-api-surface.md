@@ -70,22 +70,26 @@ Common query params: `region=%s`, `&pilots=`, `?team=`, `&sortby=`,
 
 ### HTTP verbs per resource (E3, approximate)
 
-Recovered by locating each path's request builder and reading the verb string
-loaded nearby (windows may include adjacent functions, so treat as the likely
-primary verb, not exhaustive):
+Recovered per resource by disassembling each request builder (tight-window read
+of the verb string at the request-setup site, `disasm_func.py`/`recover_object.py
+--verbs`):
 
-| Resource | Verb(s) | Note |
-|----------|---------|------|
+| Resource | Verb | Note |
+|----------|------|------|
 | `accounts` | GET | Fetch account. |
-| `pilots` / `pilot-status` | GET (+ POST) | Read pilot; POST for create/mutate ops. |
+| `pilots` / `pilot-status` | GET | Read pilot(s). |
 | `sessions` | GET | Find/list sessions (matchmaking read). |
-| `leagues` | GET, DELETE | Read; DELETE likely "leave league". |
-| `notifications` | POST | Post/ack notifications (oculus channel). |
+| `sessionrequests` | POST | Create a matchmaking request. |
+| `battleservers` | POST | Register/allocate a battle server. |
+| `staticdata` | GET | Fetch static-data manifest/files. |
+| `leagues` | GET | Read leagues (a DELETE — "leave" — also exists). |
+| `challenges` | POST | Report challenge progress/completion. |
 | `client-event` | POST | Submit telemetry events. |
 | (session/state updates) | PUT | `PUT` seen in session-ish builders (`13-*`). |
 
-So the API uses the full GET/POST/PUT/DELETE set; a re-impl must route all four.
-Exact verb per endpoint is best confirmed by capture (E4).
+So: **reads = GET** (accounts/pilots/sessions/staticdata/leagues), **creates/
+reports = POST** (sessionrequests/battleservers/challenges/client-event),
+**updates = PUT**, plus a **DELETE** (leave league). A re-impl routes all four.
 
 ## Pilot object — HATEOAS link graph
 
