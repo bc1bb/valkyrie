@@ -21,6 +21,8 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 4. `networking/00-architecture.md` — the big picture of how the game talks online.
 5. `networking/01-rest-backend.md` — the REST backend resource surface.
 6. `networking/02-websocket-netdriver.md` — realtime gameplay replication transport.
+7. `networking/03-authentication.md` — OAuth2 / CCP SSO login handshake.
+8. `networking/04-backend-environments.md` — host topology (TQ/Chaos/Havoc).
 
 ## Catalogue
 
@@ -32,6 +34,8 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/00-architecture.md` | net | draft | Three planes: REST backend, WebSocket replication, Steam/Oculus platform. |
 | `networking/01-rest-backend.md` | net | draft | VkRestUtils resource clients = backend REST API surface. |
 | `networking/02-websocket-netdriver.md` | net | draft | UE4 HTML5Networking WebSocketNetDriver over libwebsockets. |
+| `networking/03-authentication.md` | net | draft | OAuth2 via CCP SSO; steam_ticket/oculus/refresh grants; Bearer token, scopes. |
+| `networking/04-backend-environments.md` | net | draft | TQ (prod) + Chaos/Havoc (test) host topology; SSO + VGS API hosts. |
 
 ## Evidence base so far
 
@@ -39,11 +43,19 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 - 13,222 embedded source-path strings (build-agent debug paths) → module map.
 - PE section table via `objdump`.
 
+## Resolved
+
+- ✅ Backend hostnames: SSO `login.eveonline.com`, API `vgs-tq.eveonline.com`
+  (+ Chaos/Havoc test envs). See `networking/04-backend-environments.md`.
+- ✅ Auth flow: OAuth2, custom `steam_ticket` / Oculus `password` /
+  `refresh_token` grants → Bearer token. See `networking/03-authentication.md`.
+
 ## Open questions (tracked, not yet answered)
 
-- Backend hostnames/endpoints (likely in config inside the 30 GB pak, or built
-  from format strings at runtime). Not yet located.
-- Exact REST paths, HTTP verbs, JSON schemas per resource.
-- Auth flow: CCP SSO vs Oculus vs Steam ticket exchange ordering.
+- Exact REST paths, HTTP verbs, JSON schemas per `Vk*Resource`.
+- OAuth `client_id`/`client_secret` and whether token endpoint needs Basic auth.
+- Token format (JWT vs opaque) and how downstream services validate it.
+- How the active environment (TQ/Chaos/Havoc) is selected at runtime.
 - WebSocket handshake subprotocol and message framing for replication.
-- Matchmaking/battle-server allocation handshake.
+- Matchmaking/battle-server allocation handshake (Plane 1 → Plane 2 seam).
+- TLS cert pinning behaviour (affects DNS-redirect feasibility).

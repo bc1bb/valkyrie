@@ -32,6 +32,7 @@ analysis/**/*.pcapng
 
 # --- Tooling / OS noise ------------------------------------------------------
 re-venv/
+.claude/
 __pycache__/
 *.pyc
 .DS_Store
