@@ -26,6 +26,25 @@ engine's online interfaces to the CCP/Valkyrie backend. Components (E2):
 A **presence interface** (`GetPresenceInterface`) is also referenced — online
 status / "in match" presence, surfaced to platform friends.
 
+### Social: presence, friends, invites, voice (E2)
+
+- **Presence** — `OnlinePresence` / `RichPresence`: the player's status (online,
+  in-menu, in-match) is published as **platform rich presence** (Steam/Oculus),
+  so platform friends see it. This is largely engine-stock `IOnlinePresence`
+  driven by game state; not necessarily a separate backend presence service.
+- **Friends** — `EVkFriendsListState` is a Vk-specific friends-list state
+  machine (load/ready/error). The friends graph itself is most likely the
+  **platform's** (Steam/Oculus) friends list, surfaced in-game.
+- **Invites / squads** — `AcceptSquadInvite` + invite flow tie into the squad
+  system (`06-*`): invite a friend → they join the squad → the squad reserves
+  slots together via PartyBeacon.
+- **Voice moderation** — `MuteRemoteTalker` / `UnmuteRemoteTalker` (engine-stock
+  UE4 voice): per-player mute state (also noted in `08-*`).
+
+Re-impl note: presence/friends ride the **platform** layer, so a backend
+re-implementation needs little here — invites/squads are the part that touch the
+game backend (session/reservation), and those are covered in `06-*`.
+
 ### Why a custom OSS
 
 UE4 normally picks one platform OSS (Steam, Oculus, etc.). Valkyrie instead
