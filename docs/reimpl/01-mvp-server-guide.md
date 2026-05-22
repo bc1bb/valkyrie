@@ -61,6 +61,25 @@ All under `{version}/valkyrie/…`, `Authorization: Bearer <JWT>`,
 follows). Return 401 on expired token to trigger refresh (`01-*`); tolerate
 missing fields (client uses `FVkJsonObject`, `13-*`).
 
+**Wrap every response in the envelope** (`13-*`):
+`{ "uri": <self>, "verb": <method>, "message": "", "content": { <object> } }`
+— the client reads `content`. Concrete object shapes for `content` are recovered
+in `13-*` / catalogued in `schemas/vgs-rest.md`; the P0 ones:
+
+```jsonc
+// accounts -> content:
+{ "pilot_uri": "<...>/pilots?pilot_id=1", "npe_completed": true,
+  "eula_signed": true }
+// pilot (GET pilots?pilot_id=) -> content: (subset; see 13-*)
+{ "pilot_id": 1, "callsign": "Test", "gender": "...", "has_set_gender": true,
+  "reputation_rank": 0, "league_score": 0, "balance": { ... },
+  "hero_ships": [], "implants": [], "applied_pilot_cosmetics": [],
+  "friends_uri": "...", "settings_uri": "...", /* ...the *_uri graph... */ }
+// staticdata GetFileList -> content:
+{ "files": [ { "filename": "...", "uri": "https://...", "checksum": "..." } ],
+  "branch_name": "LIVE", "build_number": "..." }
+```
+
 Minimum chain:
 1. **Client/signup** (`clients`/`signup`): accept the client fingerprint
    (`build_version`, `os_platform`, `hmd_type`, …); return OK + any bootstrap
