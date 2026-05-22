@@ -100,6 +100,19 @@ A **squad** (party) groups players who matchmake and reserve slots together.
 PartyBeacon `ReservationRequest` carries the whole party as one reservation,
 which is why `IncorrectPlayerCount` / `PartyLimitReached` are possible results.
 
+## Playlists & search state
+
+Matchmaking is organized into **playlists** (`Playlist`) — curated sets of
+game modes/maps a player can queue for (e.g. a ranked playlist vs. a casual
+one). The client surfaces a `Searching` state while a request is outstanding
+(this is the `FindingSession` `eConnectionState`, `09-*`). A re-implemented
+matchmaker should accept a playlist selector and resolve it to a mode + map +
+rank band for the session/battle-server it allocates.
+
+A server clock reference (`ServerTime`) is also exposed — used to align
+client/server timing (cf. the `ServerTimeStamp`/`ClientTimeStamp` movement
+replication in `08-*`); a backend should provide an authoritative time source.
+
 ## Custom / private sessions
 
 A `CustomSession` / `custommatch` path exists for private/custom matches
