@@ -266,6 +266,20 @@ Backend **responds** with the rewards object (`reputation`, `old/new_rank`,
 So the match-end flow is: server POSTs this report → backend computes payout →
 returns rewards. (`objective_*` are the scored objective events; new fields.)
 
+## Completeness audit (E3)
+
+A sweep with `recover_object.py` across remaining anchors (`collectible_name`,
+`upgrade_name`, `friends_uri`, `item_id`, …) found **no significant new
+structures** — they land in already-documented objects:
+- **upgrades**: `{ upgrade_name, xp, active, seconds_remaining, seconds_to_start }`
+  — i.e. timed/active upgrades & boosters (consistent with `global_booster`/
+  `booster_name`/`multiplier`, `14-*`).
+- collectibles: a thin list (`collectible_name` + ids).
+- friends/cosmetics: resolve into the pilot link graph (already documented).
+
+So the recovered object set is **complete** for the resources the client uses;
+remaining refinement is value-types/nesting via capture (E4).
+
 ## Object-model coverage status — COMPLETE (E3)
 
 Recovered statically: **pilot, session, post-battle rewards, squad, leaderboard
