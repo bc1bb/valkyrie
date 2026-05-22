@@ -27,6 +27,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 10. `networking/06-matchmaking-beacons.md` — reservation beacons + connection mgmt.
 11. `networking/07-online-subsystem-and-telemetry.md` — custom OSS + Epic telemetry.
 12. `networking/08-gameplay-replication.md` — in-match RPC surface.
+13. `networking/09-session-lifecycle-and-roadmap.md` — capstone lifecycle + roadmap.
 
 ## Catalogue
 
@@ -44,6 +45,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/06-matchmaking-beacons.md` | net | draft | UE4 PartyBeacon reservation flow; reconnect; heartbeat/watchdog; timeouts. |
 | `networking/07-online-subsystem-and-telemetry.md` | net | draft | Custom OnlineSubsystemVk (identity/session/oculus/steam); Epic DataRouter telemetry. |
 | `networking/08-gameplay-replication.md` | net | draft | In-match RPC surface: movement/combat/spectator/match-flow/vehicle/voice. |
+| `networking/09-session-lifecycle-and-roadmap.md` | net | draft | Capstone: eConnectionState machine, failure modes, prioritized re-impl roadmap. |
 
 ## Evidence base so far
 
