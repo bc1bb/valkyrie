@@ -57,9 +57,12 @@ Notes:
 - `intellectual_property=VALKYRIE` namespaces the request to this title.
 - The Steam ticket is obtained via Steamworks `GetAuthSessionTicket`; the Oculus
   triplet (user id + nonce + callsign) via the Oculus Platform SDK.
-- The token endpoint very likely requires HTTP **Basic** auth with the app's
-  OAuth `client_id`/`client_secret` (standard CCP SSO; the binary references
-  `client_id` and `Authorization: Basic`). Exact client credentials TBD.
+- The token endpoint **requires HTTP Basic auth** with the app's OAuth
+  `client_id`/`client_secret` — **confirmed live (E4)**: an unauthenticated
+  `POST /oauth/token` to the live host returns **401** (see
+  `12-live-endpoint-observations.md`). The client must send
+  `Authorization: Basic base64(client_id:client_secret)`. Exact credentials TBD
+  (not obtainable by probing; needs binary/dynamic analysis).
 
 ## Scopes requested
 

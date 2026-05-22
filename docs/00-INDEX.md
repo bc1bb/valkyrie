@@ -55,6 +55,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/09-session-lifecycle-and-roadmap.md` | net | draft | Capstone: eConnectionState machine, failure modes, prioritized re-impl roadmap. |
 | `networking/10-static-data-distribution.md` | net | draft | GetFileList manifest (files[] allow-list) + content download; VOIP note. |
 | `networking/11-progression-economy-model.md` | net | draft | Backend player-state: Silver/Gold currency, rewards, ranks, loadout/cosmetic/implant/hero-ship data. |
+| `networking/12-live-endpoint-observations.md` | net | **verified** | E4: DNS + live probes — SSO/token endpoint alive behind Cloudflare, 401 confirms Basic client auth; Chaos DNS alive, Havoc gone. |
 | `networking/schemas/vgs-rest.md` | net | draft | Consolidated VGS REST reference: base/versioning, endpoints, object fields, MVP backend. |
 
 ## Phase status
@@ -90,11 +91,16 @@ to resolve the remaining wire-level unknowns (below). See
 - ✅ JSON model: snake_case fields, **HATEOAS** (`*_uri` link fields drive
   navigation); recovered id/config/stats/squad field sets. See `01-*`.
 
+- ✅ **(E4, live)** SSO `login.eveonline.com/oauth/token` is **alive**, POST-only,
+  and **requires HTTP Basic client auth** (401 unauthenticated). Prod hosts sit
+  behind Cloudflare; Chaos test DNS still resolves; Havoc gone. See `12-*`.
+
 ## Open questions (tracked, not yet answered)
 
 - Remaining exact REST paths (pilots/battles/sessions/battleserver), HTTP verbs,
   and JSON schemas per `Vk*Resource` (some built by concat — need gdb capture).
-- OAuth `client_id`/`client_secret` and whether token endpoint needs Basic auth.
+- OAuth `client_id`/`client_secret` values (Basic auth requirement now CONFIRMED
+  E4; the credential VALUES still need binary/dynamic analysis).
 - JWT signing algorithm + validation key (server-side trust anchor).
 - How the active environment (TQ/Chaos/Havoc) is selected at runtime
   (NOT `-tq/-chaos/-havoc`; those were host-string substrings, debunked).
