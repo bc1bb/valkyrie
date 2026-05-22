@@ -70,6 +70,8 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 
 - ✅ REST path namespace: `{version}/valkyrie/<resource>/…` (v1.0 & v2.0 mixed),
   e.g. `v2.0/valkyrie/accounts/`, `v2.0/valkyrie/stores/7/offers/`. See `01-*`.
+- ✅ JSON model: snake_case fields, **HATEOAS** (`*_uri` link fields drive
+  navigation); recovered id/config/stats/squad field sets. See `01-*`.
 
 ## Open questions (tracked, not yet answered)
 

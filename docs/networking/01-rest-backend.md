@@ -81,6 +81,43 @@ Observations:
   exact templates are not all present as static strings (built by concatenation)
   — confirm via the gdb path in `methodology/traffic-capture-plan.md`.
 
+## JSON object model & HATEOAS pattern (E2)
+
+Backend JSON uses **snake_case** field names. A large share are **`*_uri`
+fields** — the API is **hypermedia/HATEOAS-driven**: a response embeds URIs that
+point to related resources, and the client follows those rather than building
+paths itself. This is *why* most exact paths aren't static strings in the binary
+(they arrive at runtime in `_uri` fields). A re-implemented backend must return
+these URIs so the client can navigate.
+
+**Link fields (`*_uri`) observed:** `pilot_uri`, `pilots_uri`, `session_uri`,
+`squad_uri`, `squad_pilot_uri`, `squad_join_uri`, `squad_invites_uri`,
+`loot_capsule_uri`, `hero_rewards_uri`.
+
+**Identity / reference fields:** `pilot_id`, `my_pilot_id`, `pilot_ids`,
+`team_id`, `squad_id`, `squad_leader_id`, `battle_id`, `battleserver_id`,
+`session_id`, `steam_id`.
+
+**Match / session config fields:** `session_type`, `max_players`, `max_pilots`,
+`min_pilot_rank`, `max_pilot_rank`, `num_ai_per_team`, `clones_per_team`,
+`battles_required`, `time_to_battle_join`. (These mirror the dedicated-server
+launch args in `05-*` — the REST session object carries the same knobs the
+server is then launched with.)
+
+**Progression / stats fields:** `reputation_rank`, `league_score`,
+`hero_ship_stats`, `team_stats`, `implant_seconds`, `applied_pilot_cosmetics`,
+`stats_updated`.
+
+**Squad fields:** `squad_id`, `squad_version`, `squad_leader_id`,
+`squad_leader_callsign`, plus the squad `*_uri` links above.
+
+> Implication for re-implementation: model resources as JSON objects with an
+> `id`, their data fields, and `*_uri` links to children/related resources. The
+> client drives navigation off those links, so the **link graph** (which
+> resource embeds which `_uri`) matters as much as individual schemas. Capturing
+> one real response per resource (gdb path, `methodology/traffic-capture-plan.md`)
+> would pin the exact field sets.
+
 ## Confirmed query parameters (E2)
 
 Recovered from embedded query-string format templates. Resource keys are
