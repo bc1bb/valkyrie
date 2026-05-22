@@ -1,0 +1,48 @@
+# ============================================================================
+# EVE: Valkyrie – Warzone — Preservation Project .gitignore
+# ----------------------------------------------------------------------------
+# This repo tracks ONLY our own clean-room documentation and analysis scripts.
+# It must NOT contain any copyrighted game files, nor raw byte-for-byte dumps
+# derived from them (string tables, disassembly listings, extracted assets).
+# Those live on disk locally but stay out of version control.
+# ============================================================================
+
+# --- The entire shipped game tree (genuine copyrighted files) ---------------
+WindowsNoEditor/
+
+# --- Raw derived artifacts (dumps generated FROM the copyrighted binary) ----
+# Keep these local only. Distilled findings go into docs/ as prose, not bytes.
+analysis/raw/
+analysis/**/*.bin
+analysis/**/*.dump
+analysis/**/*.pcap
+analysis/**/*.pcapng
+
+# --- Defensive catch-all for any game binary/asset extensions ---------------
+*.exe
+*.dll
+*.pak
+*.mp4
+*.pdb
+*.vdf
+*.uasset
+*.umap
+*.ubulk
+*.uexp
+
+# --- Tooling / OS noise ------------------------------------------------------
+re-venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.swp
+
+# ============================================================================
+# Explicitly TRACK our work product (un-ignore after the broad rules above).
+# ============================================================================
+!.gitignore
+!README.md
+!docs/
+!docs/**
+!analysis/scripts/
+!analysis/scripts/**
