@@ -38,6 +38,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `methodology/traffic-capture-plan.md` | method | draft | How to get E4 wire evidence via DNS redirect + TLS-terminating loopback stub. |
 | `engine/01-engine-identification.md` | engine | verified | UE 4.14.3, codename Vk, module list, third-party libs. |
 | `engine/02-module-glossary.md` | engine | draft | Navigational map: modules, networking classes, VkGame gameplay clusters. |
+| `engine/03-input-peripherals.md` | engine | draft | Input surface: DirectInput HOTAS, TrackIR head tracking, Tobii eye tracking (all client-local). |
 | `binary/01-binary-overview.md` | binary | draft | PE layout, sections, build metadata, embedded toolchain. |
 | `networking/00-architecture.md` | net | draft | Three planes: REST backend, WebSocket replication, Steam/Oculus platform. |
 | `networking/01-rest-backend.md` | net | draft | VkRestUtils resource clients = backend REST API surface. |
