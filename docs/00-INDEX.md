@@ -84,6 +84,7 @@ a re-implementer; this INDEX is the full catalogue.
 | `gameplay/12-tacticalmap-comms.md` | gameplay | draft | Tactical map (clone-vat screen) + networked quick-chat (comm wheel/VO) + call-ins (EMP/OverShield/RepairBots). |
 | `gameplay/13-frontend-flow.md` | gameplay | draft | Front-end menu flow: 3 scene managers (Login/HUB/BattleCarousel), screen catalogue, navigation mapped to connection states + backend. |
 | `reference/enums.md` | reference | living | Enum/type lookup index (~116 EVk* enums) — name→purpose→doc; find which doc covers a given enum/state-machine. |
+| `reference/rpcs.md` | reference | living | RPC inventory (~170 Server/~120 Client/~10 Multicast) by theme; the replication call-contract + the _Validate (server-validation) pattern. |
 
 ## Phase status
 
