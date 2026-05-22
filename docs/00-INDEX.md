@@ -25,6 +25,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 8. `networking/04-backend-environments.md` — host topology (TQ/Chaos/Havoc).
 9. `networking/05-battle-server-launch.md` — dedicated server launch contract.
 10. `networking/06-matchmaking-beacons.md` — reservation beacons + connection mgmt.
+11. `networking/07-online-subsystem-and-telemetry.md` — custom OSS + Epic telemetry.
 
 ## Catalogue
 
@@ -40,6 +41,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/04-backend-environments.md` | net | draft | TQ (prod) + Chaos/Havoc (test) host topology; SSO + VGS API hosts. |
 | `networking/05-battle-server-launch.md` | net | draft | Dedicated server launch args: -BATTLEID/-BATTLESERVER_URI/-JWT/teams/AI. |
 | `networking/06-matchmaking-beacons.md` | net | draft | UE4 PartyBeacon reservation flow; reconnect; heartbeat/watchdog; timeouts. |
+| `networking/07-online-subsystem-and-telemetry.md` | net | draft | Custom OnlineSubsystemVk (identity/session/oculus/steam); Epic DataRouter telemetry. |
 
 ## Evidence base so far
 
