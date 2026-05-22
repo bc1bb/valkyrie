@@ -145,12 +145,20 @@ Score components: `Score_Kills`, `Score_Assists`, `Score_Repairing`,
 
 ## Client signup / fingerprint (sent to `clients`/`signup`)
 
-`client_id`, `client_type`, `distribution_platform`, `os_platform`, `platform`,
-`build_version`/`build_number`/`branch`/`branch_name`/`changelist`,
-`deprecated_version`, `locale`, `hmd_type`, `is_2d`, `machine_id`,
-`computer_name`, `cpu_vendor`/`cpu_brand`/`gpu_brand`/`num_cores`/
-`physical_memory_gb`, `command_line`, `process_id`, `instance_name`, `app_guid`,
-`app_info`.
+**Request body (E3, recovered parse order via `recover_object.py cpu_brand`):**
+```
+{ app_guid, run_number, locale, distribution_platform,
+  cpu_vendor, cpu_brand, gpu_brand, num_cores, physical_memory_gb,
+  client_type, preferred_region, app_info }
+```
+Plus the broader fingerprint fields seen in the cluster: `client_id`,
+`os_platform`/`platform`, `build_version`/`build_number`/`branch`/`branch_name`/
+`changelist`, `deprecated_version`, `hmd_type`, `is_2d`, `machine_id`,
+`computer_name`, `command_line`, `process_id`, `instance_name`.
+
+A re-impl `clients`/`signup` endpoint must **accept** this body (it can ignore
+most fields) and return OK + bootstrap config; gate on `build_version`/
+`deprecated_version` only if you want version control (`OutdatedClient`, `09-*`).
 
 ## Client-event telemetry + throttling
 

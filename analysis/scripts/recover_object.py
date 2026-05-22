@@ -47,8 +47,9 @@ def main():
     if len(sys.argv) < 2:
         print(__doc__); sys.exit(1)
     anchor = sys.argv[1]
-    back = int(sys.argv[2]) if len(sys.argv) > 2 else 0xC00
-    fwd  = int(sys.argv[3]) if len(sys.argv) > 3 else 0x400
+    # int(x, 0) accepts decimal or 0x-hex window sizes
+    back = int(sys.argv[2], 0) if len(sys.argv) > 2 and not sys.argv[2].startswith("--") else 0xC00
+    fwd  = int(sys.argv[3], 0) if len(sys.argv) > 3 and not sys.argv[3].startswith("--") else 0x400
     want_verbs = "--verbs" in sys.argv
 
     f, imagebase, secs = load_pe(EXE)
