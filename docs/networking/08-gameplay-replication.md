@@ -87,6 +87,41 @@ mid-session.
 `ServerUpdateLevelVisibility` — UE4 plumbing for object refs, level streaming
 visibility, and bulk client data delivery (engine-stock).
 
+## Replicated properties (E2)
+
+Beyond RPCs, the server replicates **state** to clients via `UPROPERTY(Replicated)`
+fields. 174 distinct `OnRep_*` handlers were recovered (E2) — i.e. the replicated
+properties a re-implemented server must maintain & push. Key ones by category
+(`OnRep_` prefix dropped):
+
+- **Match / team / objective:** `MatchState`, `Score`/`CurrentScore`/`TeamScores`,
+  `TeamID`, `TeamRespawns`, `RelicHolders`, `PickupState`/`ActivePickups`,
+  `OwningTeam(Id)Changed`/`OwningVehicle`, `ObjectiveCompletedBy`,
+  `OnMissionStateUpdated`, `Team0/1MessageList` (quick-chat feed).
+- **Combat / targeting:** `Target`/`TargetPawn`/`TargetLocation`,
+  `LockingTarget`/`MarkedTarget`/`MaxLockTargets`, `TakenDamage`/`LastTakeHitInfo`,
+  `HitCounter`/`HitPointsUpdated`, `CloakState`, `ShieldRearmTime`/`ShieldRepCounter`/
+  `ShieldMaterial`, projectiles (`Destroyed`/`Disrupted`/`Countermeasured`/
+  `Retargeted`/`ForceExpired`Projectiles), `WeaponConfig`/`ProjectileConfig`/
+  `InstantHitConfig`, `Detected(Vehicles)`/`DetectionRange`.
+- **Abilities / ultimate:** `Ultimate`/`UltimateTimer`, `Energy`,
+  `OverChargeActive`/`OverchargeEnabled`/`OverShieldFromUltimate`,
+  `DronesState`/`CanDropDrone`/`DroneOnCooldown`, `EMPActor`/`FireEMP`,
+  `ReachedFullCharge`.
+- **Movement / ship:** `ReplicatedMovement`/`ReplicatedBasedMovement` (engine-stock),
+  `MovementStateChanged/Updated`, `ShipState`, `CurrentState`/`DesiredState`,
+  `BeginLaunch`/`LaunchingPlayer`/`LaunchRequired`, `BoostingBroadcast`,
+  `UseVehicleLights`.
+- **Player / spectator / cosmetic:** `PlayerName`, `PlayerState`, `Gender`,
+  `PilotCustomisationList`, `VehicleCosmeticUniqueName`/`DecalUniqueName`,
+  `GameModeUniqueName`, `ReplicatedCurrentSpectatorTarget`/`…SpectatorTargetEnergy`,
+  `OnlySpectator`, `SpectatorClass`.
+
+A re-impl server (on the same engine) gets the replication machinery free; it
+must set these properties authoritatively so clients' `OnRep_*` handlers fire.
+The `*Config` properties (Weapon/Projectile/InstantHit) replicate per-shot
+parameters — the server pushes the loadout-derived config to clients.
+
 ## Re-implementation value
 
 The bulk of replication is **engine-stock UE 4.14** — a re-implemented server
