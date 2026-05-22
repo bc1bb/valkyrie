@@ -66,6 +66,41 @@ tracing of the `SetHeader("Authorization", …)` call).
 > talking to CCP's *original* (dead) SSO. So this is reclassified from a
 > blocking unknown to **nice-to-have**. (See `03-*`, `12-*`.)
 
+## Pilot object — recovered parse order (E3)
+
+Anchoring on pilot-unique fields (`has_set_gender`, `npe_complete_uri`,
+`hero_xp_transfer_uri`) located the pilot parse routine; the ordered `lea`
+field-string loads give the **parse-order field sequence** (strong structural
+hint — `_uri` = HATEOAS links, plurals = collections/sub-objects):
+
+```
+# envelope / auth context (likely outer response wrapper)
+message, content, token, provider, signup
+# squad sub-object (pilot's current squad)
+invites, squad_join_uri, squad_uri, squad_version,
+squad_leader_id, squad_leader_callsign
+# current session/battle summary (nested)
+max_players, status, is_joinable
+# pilot link graph (HATEOAS *_uri)
+hero_xp_transfer_uri, friends_uri, cosmetics_uri, gender_uri,
+collectibles_uri, npe_complete_uri, hero_rewards_uri, training_uri,
+recall_uri, eula_uri, settings_uri, hero_upgrades_uri,
+hero_cosmetics_uri, applied_hero_cosmetics_uri, invites_uri,
+pilot_cosmetic_uri, pilot_cosmetic_variant_uri, applied_pilot_cosmetics_uri
+# collections / sub-objects
+challenges, implants, pilot_cosmetics, applied_pilot_cosmetics,
+global_events, settings, hero_ships, hero_cosmetics,
+applied_hero_cosmetics, loot_capsules, hero_ship_stats
+# scalar identity / flags
+callsign, pilot_name, gender, has_set_gender, npe_completed,
+is_showfloor, showfloor_spectator, eula_signed, properties
+```
+
+This is the most complete single-resource structure recovered statically. The
+grouping (links vs collections vs scalars) is reliable; precise object nesting
+(which collection sits under which key) still benefits from one captured
+response (E4). It directly fills step 3.3 of the build guide (`reimpl/01-*`).
+
 ## Value
 
 The disassembly method is now proven and can be pointed at any `Vk*Resource`
