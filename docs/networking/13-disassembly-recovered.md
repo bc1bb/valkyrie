@@ -227,6 +227,18 @@ purchase/sale request: { currency, amount, parameters }
 (`next` = pagination cursor; media type `application/vnd.ccp.eve.VgsSale-v1+json`,
 `14-*`.)
 
+## Remaining thin/shared objects (E3)
+
+The last few resources are thin or reuse documented fields:
+- **session-request** (`sessionrequests`): a thin POST — carries the matchmaking
+  selectors already documented (game_mode/session_type/region as query+body) and
+  returns a `session` (log: "Session Request returned session: %s and pilot: %s").
+  No distinct large object.
+- **notification**: a thin list (`notificationlist_success`/`_fail`); no rich
+  object recovered — likely `[ { message/type/uri } ]`.
+- **league entry**: `{ score, rank, completed }` (+ display/settings toggles
+  `show_leagues`, `roll_on_stick` which belong to the pilot `settings` object).
+
 ## Object-model coverage status — COMPLETE (E3)
 
 Recovered statically: **pilot, session, post-battle rewards, squad, leaderboard
