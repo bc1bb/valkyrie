@@ -45,6 +45,27 @@ Re-impl note: presence/friends ride the **platform** layer, so a backend
 re-implementation needs little here — invites/squads are the part that touch the
 game backend (session/reservation), and those are covered in `06-*`.
 
+### OSS interface surface (E2) — deliberately minimal
+
+`OnlineSubsystemVk` implements only a small set of UE4 `IOnline*` interfaces:
+
+| Interface | Provider | Role |
+|-----------|----------|------|
+| Identity | `OnlineIdentityVk` | Login → backend JWT (`03-*`). |
+| Session | `OnlineSessionVk` | Create/find/join session (→ REST + beacon). |
+| Presence | `GetPresenceInterface` | Online/in-match status (platform rich presence). |
+| Achievements | `GetAchievementsInterface` | Achievements (likely Steam/Oculus-backed). |
+
+Plus a Steam helper async task **`FOnlineAsyncTaskVkSteamGetUserPrivilege`** —
+a Steam **user-privilege / age-gate / multiplayer-allowed** check before online play.
+
+**Notably ABSENT as OSS interfaces:** Friends, Party, Store, Leaderboards, Voice,
+ExternalUI. Those features exist but are implemented through the **`VkRestUtils`
+REST layer** (`01-*`/`14-*`: `VkVirtualGoods`, `VkLeaderboards`, squads, friends
+via platform) rather than UE4 OSS interfaces. So a re-implementer integrating at
+the OSS level only needs identity/session/presence/achievements; everything else
+is plain REST.
+
 ### Why a custom OSS
 
 UE4 normally picks one platform OSS (Steam, Oculus, etc.). Valkyrie instead
