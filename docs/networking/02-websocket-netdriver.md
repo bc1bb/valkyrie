@@ -72,10 +72,15 @@ server          : spawn player; NMT_NetGUIDAssign for object-ref GUIDs
 
 ## Vk-specific seams to determine (open questions)
 
-- The **`Sec-WebSocket-Protocol`** subprotocol string the client requests: sent
-  via a `%s` format (built at runtime, not a static literal in the binary), so
-  it may be empty or computed. A re-implemented server should echo back whatever
-  the client offers. Confirming the actual value needs a live capture (E4).
+- The **`Sec-WebSocket-Protocol`** subprotocol: **no game-specific subprotocol
+  name string exists** in the binary (E2 — searched all strings; only
+  libwebsockets internals + `Sec-WebSocket-Protocol: ` with a `%s`/empty value
+  appear). So the UE4 HTML5Networking driver registers an **empty/default
+  subprotocol** (libwebsockets `lws_protocols` with no/`""` name). A
+  re-implemented server therefore does **not** need to match a specific
+  subprotocol value — accept the handshake without requiring one. (Verify the
+  exact on-wire header with a capture if strict, but the contract is "no
+  specific subprotocol".)
 - WebSocket path/URL the client connects to (provided by
   `VkBattleServerResource`, Plane 1 — see `01-rest-backend.md`).
 - Whether the WS uses TLS (`wss://`) or plain `ws://`, and on what port.
