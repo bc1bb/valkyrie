@@ -161,6 +161,37 @@ purchase-state enum: `Success`, `Failed`, `Cancelled`, `Invalid`, `NotAllowed`,
 `AlreadyOwned`, `Restored`, `Unknown`. A re-implemented store must drive
 transactions to one of these terminal states (engine-stock semantics).
 
+## Request lifecycle & error handling (E2)
+
+The HTTP layer builds on UE4's **`HttpRetrySystem`** (engine-stock retry/backoff)
+with `HttpConnectionTimeout` / `HttpSendTimeout` bounds. Observed behaviors a
+re-implemented backend must play nicely with:
+
+- **Token-expiry refresh-and-retry:** a request can fail specifically *because
+  the auth token expired*. On that condition the client refreshes via the
+  `refresh_token` grant (`03-*`) and retries the original request. → A backend
+  should return a clear "expired/unauthorized" signal (e.g. HTTP 401) so this
+  path triggers, rather than a generic failure.
+- **Allowed (non-fatal) error codes:** some requests treat certain HTTP error
+  codes as *expected/allowed* (handled, not surfaced as failures) — e.g. a
+  "not found" on an optional resource. Per-resource tolerance; a backend
+  returning these won't break the client.
+- **Slow-request handling:** a request "taking too long" is flagged (timeout
+  watchdog) and may be retried/abandoned per the retry policy.
+- **Terminal states:** request sent → succeeded | failed (incl. "response code
+  said error"). `VkAuthHttpRequest` wraps the token-refresh-on-expiry logic.
+
+> Re-impl guidance: use standard HTTP status semantics — 2xx success, **401 for
+> expired/invalid token** (triggers refresh), 404 etc. for optional-resource
+> "allowed" cases. The client's retry layer is engine-stock and forgiving.
+
+## Crash reporting (engine-stock, E2)
+
+Crashes are handled by UE4's shipped **`CrashReportClient.exe`**
+(`CrashReporterSettings`, `crashreports`) → Epic's crash backend. **Non-essential
+and irrelevant to preservation** — like DataRouter telemetry (`07-*`), it can be
+ignored/blocked. Not part of the game backend.
+
 ## Known unknowns (to resolve by traffic capture / static analysis)
 
 - Base URL(s) and per-resource path templates.
