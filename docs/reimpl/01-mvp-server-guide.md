@@ -43,7 +43,10 @@ Hosts: `valkyrieapi.com` is **NXDOMAIN** (clean redirect target); SSO host
 ## 2. SSO token endpoint (`03-*`, `12-*`, `13-*`)
 
 `POST /oauth/token`, `application/x-www-form-urlencoded`, **HTTP Basic** client
-auth required (return 401 without it — confirmed E4). Accept grants:
+auth required (return 401 without it — confirmed E4). The client sends
+`Authorization: Basic base64("valkyrieClient:")` — **`client_id=valkyrieClient`,
+empty secret (public client)**, recovered by disassembly (`03-*`/`13-*`). Your
+SSO should accept that client_id (secret optional). Accept grants:
 - `grant_type=steam_ticket&steam_ticket=…&intellectual_property=VALKYRIE&scope=…`
 - `grant_type=password&oculus_user_id=…&oculus_nonce=…&oculus_callsign=…&…`
 - `grant_type=refresh_token&refresh_token=…`

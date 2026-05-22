@@ -21,7 +21,9 @@ embedded strings/symbols · **E3** static disassembly · **E4** live observation
 | Engine identity (UE 4.14.3, codename Vk) | ✅ complete | E1 | Verified from `Build.version` + paths. |
 | Backend hosts / DNS topology | ✅ complete | **E4** | SSO alive (Cloudflare); `valkyrieapi.com` NXDOMAIN; Chaos DNS up. `12-*` |
 | Auth — endpoint, POST-only, Basic-auth req'd | ✅ verified | **E4** | Live 401 confirms Basic client auth. `03-*`,`12-*` |
-| Auth — grants, scopes, JWT | ✅ strong | E2/E3 | Grant bodies + token resp recovered. client_id values N/A for re-impl. |
+| Auth — grants, scopes | ✅ strong | E2/E3 | Grant bodies + token resp recovered. |
+| Auth — client_id | ✅ **recovered** | **E3** | `valkyrieClient`, empty secret (public client) — disasm. `03-*` |
+| Auth — JWT internals | ✅ resolved | E3 | Opaque to client; backend-only; re-impl defines own. `03-*` |
 | REST resources + path templates | ✅ strong | E2/E3 | `{tenant}.valkyrieapi.com`, `{ver}/valkyrie/...`. `14-*` |
 | REST JSON object model (12 objects) | ✅ strong | **E3** | Field sets + grouping recovered by disasm. `13-*` |
 | HTTP verbs per resource | ◑ approximate | E3 | GET/POST/PUT/DELETE mapped (windowed). `14-*` |
@@ -29,7 +31,7 @@ embedded strings/symbols · **E3** static disassembly · **E4** live observation
 | Matchmaking (PartyBeacon) + reservation | ✅ strong | E2/E5 | Engine-stock beacon + Vk request types. `06-*` |
 | Battle-server launch + lifecycle + reg | ✅ strong | E2/E3 | Args, `FVkBattlesResource`, localhost reg. `05-*`,`14-*` |
 | Realtime transport (WebSocket NetDriver) | ✅ strong | E1/E2 | HTML5Networking + libwebsockets. `02-*` |
-| Control-channel handshake (NMT_*) | ◑ engine-stock | E2/E5 | Sequence from UE4; subprotocol value needs capture. `02-*` |
+| Control-channel handshake (NMT_*) | ✅ strong | E2/E5 | UE4 sequence; WS subprotocol resolved (empty/default). `02-*` |
 | In-match RPC surface | ✅ strong | E2 | Categorized; server-authoritative. `08-*` |
 | Progression / economy / cosmetics | ✅ strong | E2/E3 | Silver/Gold, rewards object, taxonomies. `11-*`,`13-*` |
 | Telemetry / watchdog | ✅ complete | E2 | Epic DataRouter (skip) + local watchdog. `07-*`,`14-*` |
@@ -73,10 +75,13 @@ transport + handshake shape, anti-cheat posture (none blocking). The
 **Needs one live capture each (E4) to finalize — not blocking design, only
 exact bytes:**
 - Per-resource JSON **value types / deep nesting** (names+grouping known, E3).
-- `NMT_Login` exact **join-token placement** + WebSocket **subprotocol** value.
+- `NMT_Login` exact **join-token placement** (control-channel login payload).
 - Whether the active **tenant** subdomain is fixed or derived.
 
-**Not needed:** CCP's `client_id`/`client_secret` (re-impl SSO sets own policy).
+**Resolved since (E3, via disassembly):** `client_id`=`valkyrieClient` (public,
+empty secret); WebSocket subprotocol (empty/default); JWT opaque-to-client. A
+function-level disassembler is now available (`analysis/scripts/disasm_func.py`,
+Capstone) — the remaining E3 items above are tractable with it, not only E4.
 
 ## Recommended next actions (priority)
 
