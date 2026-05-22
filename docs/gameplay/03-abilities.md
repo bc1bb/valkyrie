@@ -187,6 +187,17 @@ overlapping ships. These tie into the missile-lock states
 (`EVkMissileLockAvailability` = Unavailable/Unlocked/Locked) handled by combat
 (`gameplay/02-combat` planned).
 
+## Ability parameters (E2)
+
+Tunable property names (values are balance/pak, out of scope): `ActiveTime`
+(how long an ability stays active), `CooldownDuration`/`CooldownTime` (recharge
+after use), `cost`/`CostDisplayMode` (Energy cost — drawn from the shared
+`EnergyComponent`, `gameplay/01`). **Ultimates** charge instead of cooldown:
+`ChargeValue`/`ChargeTime`/`ChargeCurve` accrue an `UltimateCharge` (from combat
+score/events) until full, then the ultimate is deployable. So: active abilities
+= Energy-cost + cooldown; ultimates = charge-gated. A re-impl server tracks
+Energy, cooldown timers, and ultimate charge per pilot (replicated, `08-*`).
+
 ## Re-implementation relevance
 
 - A re-implemented **server** inherits the authoritative ability logic from the
