@@ -181,6 +181,30 @@ active_challenges[ { challenge_id, challenge_name, difficulty_name,
 challenges_ended_recently
 ```
 
+## Auth token response — confirmed (E3)
+
+Anchor `expires_in` → `{ access_token, refresh_token, expires_in }` (standard
+OAuth2 token response; matches `03-*`). Confirms what a re-impl SSO returns.
+
+## Client-event telemetry payload — recovered (E3)
+
+Anchor `event_name` → the `client-event` payload carries `event_name`, `count`,
+`type_name`, plus event-specific stats: `ship_name`, `kills`/`deaths`/`assists`/
+`wins`/`losses`/`battles`, `implant_type_name`/`implant_count`,
+`loot_score`/`loot_capsule_uri`/`loot_capsule_type_name`/`capsules_earned`/
+`unlocked`, `cosmetics`/`cosmetic_name`. (Different events fill different
+subsets — see throttling in `14-*`.)
+
+## Object-model coverage status
+
+Recovered statically (E3) so far: **pilot, session, post-battle rewards, squad,
+leaderboard entry, challenge, auth-token response, client-event** + the **common
+envelope**. Not yet recovered via this method: **battle-server registration** and
+the **static-data file** object (their builders/anchors sit in log/other
+contexts; best closed by capture E4 or targeted further disasm). This is broad
+coverage of the JSON object model — enough to scaffold a re-impl pending a
+capture pass to confirm exact nesting/value types.
+
 ## Value
 
 The disassembly method is now proven and can be pointed at any `Vk*Resource`
