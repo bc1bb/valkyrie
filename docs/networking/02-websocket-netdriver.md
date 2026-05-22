@@ -45,8 +45,10 @@ These are documented UE 4.14 behaviours; reuse the public engine to satisfy them
 
 ## Vk-specific seams to determine (open questions)
 
-- The **`Sec-WebSocket-Protocol`** subprotocol string the client requests (must
-  be echoed by the server to complete the handshake).
+- The **`Sec-WebSocket-Protocol`** subprotocol string the client requests: sent
+  via a `%s` format (built at runtime, not a static literal in the binary), so
+  it may be empty or computed. A re-implemented server should echo back whatever
+  the client offers. Confirming the actual value needs a live capture (E4).
 - WebSocket path/URL the client connects to (provided by
   `VkBattleServerResource`, Plane 1 — see `01-rest-backend.md`).
 - Whether the WS uses TLS (`wss://`) or plain `ws://`, and on what port.

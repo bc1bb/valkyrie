@@ -24,6 +24,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 7. `networking/03-authentication.md` — OAuth2 / CCP SSO login handshake.
 8. `networking/04-backend-environments.md` — host topology (TQ/Chaos/Havoc).
 9. `networking/05-battle-server-launch.md` — dedicated server launch contract.
+10. `networking/06-matchmaking-beacons.md` — reservation beacons + connection mgmt.
 
 ## Catalogue
 
@@ -38,6 +39,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/03-authentication.md` | net | draft | OAuth2 via CCP SSO; steam_ticket/oculus/refresh grants; Bearer token, scopes. |
 | `networking/04-backend-environments.md` | net | draft | TQ (prod) + Chaos/Havoc (test) host topology; SSO + VGS API hosts. |
 | `networking/05-battle-server-launch.md` | net | draft | Dedicated server launch args: -BATTLEID/-BATTLESERVER_URI/-JWT/teams/AI. |
+| `networking/06-matchmaking-beacons.md` | net | draft | UE4 PartyBeacon reservation flow; reconnect; heartbeat/watchdog; timeouts. |
 
 ## Evidence base so far
 
