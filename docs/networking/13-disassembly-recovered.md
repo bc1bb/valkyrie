@@ -248,6 +248,24 @@ The last few resources are thin or reuse documented fields:
 - **league entry**: `{ score, rank, completed }` (+ display/settings toggles
   `show_leagues`, `roll_on_stick` which belong to the pilot `settings` object).
 
+## Match-result report — recovered (E3, request body)
+
+The dedicated server's match-end POST (drives rewards, `05-*`/`11-*`):
+```
+{ battle_id, pilot_id, team_id,
+  battle_stats: { ... }, player_stats: { ... } }
+# stats content:
+{ score, loot_scores, kills, deaths, assists, hero_ship_stats,
+  # objective breakdown:
+  objective_firstblood, objective_multikill, objective_dronekill,
+  objective_emp, objective_repair, objective_nodekill,
+  objective_carrierkill, objective_capture }
+```
+Backend **responds** with the rewards object (`reputation`, `old/new_rank`,
+`base`+`bonus`+`boost`, `xp`, `loot`, capsules — see the rewards object above).
+So the match-end flow is: server POSTs this report → backend computes payout →
+returns rewards. (`objective_*` are the scored objective events; new fields.)
+
 ## Object-model coverage status — COMPLETE (E3)
 
 Recovered statically: **pilot, session, post-battle rewards, squad, leaderboard
