@@ -22,7 +22,13 @@ fields below (tier E3 — read from the request-builder routines).
    the instruction (`lea reg,[rip+disp]`) referencing it.
 3. Scan that routine's window for other `48/4C 8D 05+disp32` (`lea` of RIP) and
    decode the UTF-16 string at each target → the field/constant set the routine
-   uses. (Script lives in the analysis notes; raw output stays git-ignored.)
+   uses.
+
+**Reproduce it:** `analysis/scripts/recover_object.py "<anchor>"` (committed, our
+own tool) implements exactly this — e.g. `recover_object.py owner_callsign`
+prints the session object. Point it at any resource-unique field to recover that
+resource's structure; output is field-name identifiers only (raw goes to the
+git-ignored `analysis/raw/` if you redirect it).
 
 Anchors used: `grant_type=steam_ticket` (→ SSO body builder @ ~`0x1420c6779`),
 `grant_type=refresh_token` (→ a builder/parser @ ~`0x14208cc2b`).
