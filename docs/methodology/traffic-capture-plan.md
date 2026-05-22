@@ -135,6 +135,41 @@ path**.
 > each pulls up the whole Steam+Proton+Wine stack. Run launch probes
 > deliberately, one at a time, with a hard timeout and process cleanup after.
 
+## Probe results — run #2 (2026-05-22, `analysis/scripts/capture_server.sh`)
+
+Headless dedicated-server attempt: `-server -nullrhi -nosound -unattended
+-nosteam` + synthesized `-BATTLEID/-BATTLESERVER_URI/-REGION/-PUBLICIP/-gamemode`.
+
+- **Result: hung in early init; killed at the 70s timeout (exit 124).** Again
+  **zero internet `connect()`/DNS** — only ~27 Steam-runtime internal Unix-socket
+  syscalls. The process never reached `OnlineSubsystemVk` / the backend call.
+- So even the headless server path stalls during early init in this environment
+  (likely blocking on Steam API context, a missing prerequisite DLL, or an init
+  step that expects a real app-launch context). `-nosteam` did not visibly help.
+
+## Conclusion: static launch probes are not the fast path here
+
+Two bounded launch probes (client, server) both **stall before backend
+networking** under bare `proton run`. Getting E4 traffic in this environment is
+a **larger deliberate effort**, not a loop-tick task. The realistic next steps,
+in order of effort:
+
+1. **Proper Steam app-launch context** — launch through Steam by the title's app
+   id (so `steam_api64` initializes and the app sees a normal context), with a
+   display (`Xvfb`) and `-nullrhi`/non-VR. Capture once it reaches login.
+2. **Redirect + TLS stub regardless of how far init gets** — stand up the local
+   `login.eveonline.com`/`vgs-tq` stub (per the loopback method above) so that
+   *if/when* the client resolves and connects, we see the request. Pair with
+   `strace`/`tcpdump`.
+3. **Dynamic analysis with `gdb`** — breakpoint the HTTP/SSO call sites
+   (`Vk*HttpRequest`) to read the constructed URL/body in memory without needing
+   the network at all. This sidesteps the init-stall entirely and is likely the
+   single most reliable way to extract exact REST paths + JSON from this build.
+
+Recommendation: pursue **(3) gdb on the request-construction path** next — it
+yields the wire-level facts (paths, bodies, JWT handling) directly and does not
+depend on the game surviving full init or on any server being reachable.
+
 ## Clean-room boundary
 
 Capturing the client's *own emitted traffic* and our *own stub's* behaviour is
