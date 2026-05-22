@@ -49,6 +49,27 @@ UE 4.14 rendering tuned for VR (E2):
 - `VkAudioTrackedMeshRotation` and `UVkDynamicMusicMapSettings` (`05-*`) indicate
   spatialized, position-tracked sources and a dynamic/adaptive music system.
 
+### Gameplay → audio integration (E2)
+
+How gameplay drives audio (the code layer; sound assets/banks are out of scope):
+- **Wwise API** via `UAkGameplayStatics` / `UAkComponent`: `PostEvent`
+  (one-shot `AkAudioEvent`s — fire, explosion, hit), `SetRTPCValue` (continuous
+  params — speed/boost/heat/health drive RTPCs), `SetState` + `SwitchGroup`
+  (global/per-object state audio). `AkRTPCData`/`AkEventData` carry the bindings.
+- **Game-state hook:** `UVkGameplayStatics::UpdateGameStateForAudio()` pushes
+  match state (warmup/active/end, intensity) into Wwise states/RTPCs.
+- **POV-aware:** `AkEventPOVData` selects 1P (cockpit) vs 3P event variants —
+  mirroring the `…1P/3P` temporary effects (`gameplay/11`).
+- **Voice-over:** `AkVoiceClipData` drives VO clips (the quick-chat speakers,
+  `gameplay/12`), routed through Wwise.
+- **Dynamic music:** `DynamicMusicComponent` + `DynamicMusicData`/`Settings`
+  driven by a `DynamicMusicValue` **RTPC** (`DynamicMusicRTPCData`) — music
+  intensity tracks gameplay (combat/objective tension). Configured per map via
+  `UVkDynamicMusicMapSettings` (`05-*`).
+
+All client-local; a preservation client runs the Wwise integration as shipped
+(needs the shipped sound banks). No backend/server relevance.
+
 ## Relevance to preservation
 
 None of this touches the backend — a server re-implementation needs nothing
