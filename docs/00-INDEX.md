@@ -22,6 +22,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 5. `networking/01-rest-backend.md` — the REST backend resource surface.
 6. `networking/02-websocket-netdriver.md` — realtime gameplay replication transport.
 7. `networking/03-authentication.md` — OAuth2 / CCP SSO login handshake.
+   (For the actionable build path, jump to `reimpl/01-mvp-server-guide.md`.)
 8. `networking/04-backend-environments.md` — host topology (TQ/Chaos/Havoc).
 9. `networking/05-battle-server-launch.md` — dedicated server launch contract.
 10. `networking/06-matchmaking-beacons.md` — reservation beacons + connection mgmt.
@@ -59,6 +60,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/13-disassembly-recovered.md` | net | draft | E3: disasm method + recovered fields (match-config, rank-up rewards), FVkJsonObject, PUT verb; client_id not needed for re-impl. |
 | `networking/14-vgs-api-surface.md` | net | draft | **Full recovered API surface**: multi-tenant URLs (valkyrieapi.com), all resources/paths, pilot HATEOAS graph, stats/cosmetic/mode taxonomies, client fingerprint, local watchdog + battleserver reg. |
 | `networking/schemas/vgs-rest.md` | net | draft | Consolidated VGS REST reference: base/versioning, endpoints, object fields, MVP backend. |
+| `reimpl/01-mvp-server-guide.md` | reimpl | draft | **Actionable build walkthrough**: redirect→SSO→pilot→staticdata→matchmaking→battle server→in-match→keepalive; what to stub. |
 
 ## Phase status
 
