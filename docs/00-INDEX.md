@@ -59,6 +59,7 @@ Token-saver convention: every doc starts with a YAML header. Read the header's
 | `networking/12-live-endpoint-observations.md` | net | **verified** | E4: DNS + live probes — SSO/token endpoint alive behind Cloudflare, 401 confirms Basic client auth; Chaos DNS alive, Havoc gone. |
 | `networking/13-disassembly-recovered.md` | net | draft | E3: disasm method + recovered fields (match-config, rank-up rewards), FVkJsonObject, PUT verb; client_id not needed for re-impl. |
 | `networking/14-vgs-api-surface.md` | net | draft | **Full recovered API surface**: multi-tenant URLs (valkyrieapi.com), all resources/paths, pilot HATEOAS graph, stats/cosmetic/mode taxonomies, client fingerprint, local watchdog + battleserver reg. |
+| `networking/15-anticheat-integrity.md` | net | draft | No EAC/BattlEye; only Steam VAC (passive) + engine NetChecksum/SecurityViolation + server-authoritative play. Private server not blocked by AC. |
 | `networking/schemas/vgs-rest.md` | net | draft | Consolidated VGS REST reference: base/versioning, endpoints, object fields, MVP backend. |
 | `reimpl/01-mvp-server-guide.md` | reimpl | draft | **Actionable build walkthrough**: redirect→SSO→pilot→staticdata→matchmaking→battle server→in-match→keepalive; what to stub. |
 
