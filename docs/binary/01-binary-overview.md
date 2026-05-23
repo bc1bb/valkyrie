@@ -21,6 +21,23 @@ evidence: [E1, E2]
   Steam install the binary is renamed to the display name and **no PDB ships**.
   (A PDB, if ever located, would massively accelerate documentation — symbols.)
 
+## Version resource & compile stamp (E1)
+
+From the PE `.rsrc` version-info block + COFF header:
+
+| Field | Value |
+|-------|-------|
+| `CompanyName` | **CCP hf.** |
+| `LegalCopyright` | © 2017 CCP hf. |
+| `ProductName` / `FileDescription` | EVE: Valkyrie |
+| `ProductVersion` | `++UE4+Release-4.14-CL-0` (UE4 Release-4.14 branch, Changelist 0 — matches `Build.version`, `binary/02-*`) |
+| `InternalName` | UnrealEngine |
+| `OriginalFilename` | `EVE Valkyrie.exe` (pre-Steam-rename) |
+| COFF `TimeDateStamp` | **2017-12-06 15:27:06 UTC** (matches the NonUFS manifest EXE date) |
+
+The product name is still "EVE: Valkyrie" (no "Warzone") in the binary; the
+publisher is CCP hf. (the EVE Online studio).
+
 ## Section table (objdump, E1)
 
 | Idx | Name | Virtual size | VMA | Notes |
