@@ -33,6 +33,9 @@ orchestrator must reproduce to host matches.
 | `-PUBLICIP=` | Public IP the server advertises to clients. |
 | `-REGION=` | Datacenter/region the instance runs in. |
 | `-SteamConnectIP=` | Steam connect address (for Steam-presence "join"). |
+| `-TENANT=` | Backend **tenant** selector (→ `{tenant}.valkyrieapi.com`, `04-*`). |
+| `-BuildName=` | Build/version label the server reports (cf. `VkGame_Version`). |
+| `-NOSTEAM` | Disable Steam init (run without the Steam client/game-server). |
 
 ## Auth args
 
@@ -108,6 +111,29 @@ So the backend tracks battle state from these server callbacks (plus the local
 registration in `14-*` and the heartbeat in `06-*`). A re-implemented backend
 must accept these lifecycle reports to keep its session/battle records correct
 (e.g. free the slot on `PlayerDisconnected`, finalize on `MatchEnded`).
+
+## Server startup behaviour (E2, log strings)
+
+Diagnostic strings expose the server boot/registration path:
+- **Steam game-server init:** the server initializes the Steam **game-server**
+  SDK (`SteamGameServer*`, `07-*`); failure logs *"Failed to initialize game
+  server with Steam!"* and *"[OnlineSubsystemSteam].GameVersion is not set.
+  Server advertising will fail"* — so Steam server advertising needs a GameVersion
+  (cf. `-BuildName=`/`VkGame_Version`). `-NOSTEAM` bypasses this (useful for a
+  private host not registering with Steam).
+- **Self-registration:** the server auto-logs-in and registers itself; failure
+  logs *"Autologin attempt failed, unable to register server!"* and
+  *"BattleServer Resource Creation/Update FAILED"* (the `battleservers` POST/PUT,
+  `13-*`/`14-*`).
+- **Offline/dev fallback:** *"Battle Resource Creation FAILED: Using fake battle
+  id"* — when battle-resource creation fails, the server falls back to a
+  synthesized ("fake") battle id and runs anyway. Useful for a standalone/offline
+  bring-up of the server without a full backend.
+- **Rewards path guard:** *"Failed to find objective manager for pilot, couldn't
+  send battle rewards!"* — confirms the score→reward seam (`VkPlayerScoreObjective`
+  manager feeds the match-result report, `gameplay/01`/`11-*`).
+- **Team fill:** *"Failed to assign player to team - probably no spaces left on
+  server"* — server-side team assignment with capacity limits.
 
 ## Re-implementation value
 

@@ -81,7 +81,9 @@ exact bytes:**
   login options (`02-*`); exact wire layout still needs capture. *(Corrected: the
   earlier "CapToken capability-token" reading was an OpenSSL SET-OID false
   positive — see `02-*`.)*
-- Whether the active **tenant** subdomain is fixed or derived.
+- ~~Whether the active **tenant** subdomain is fixed or derived.~~ **Resolved
+  (E2):** config-driven — `-TENANT=` arg + `VkGame_TenantDomains` mapping, carried
+  as `valkyrie.tenant` property (`04-*`). Capture only needed for the exact value.
 
 **Resolved since (E3, via disassembly):** `client_id`=`valkyrieClient` (public,
 empty secret); WebSocket subprotocol (empty/default); JWT opaque-to-client. A

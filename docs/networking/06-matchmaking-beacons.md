@@ -4,7 +4,7 @@ title: Matchmaking, Reservation Beacons & Connection Management
 summary: Match join uses UE4's stock PartyBeacon reservation protocol (reserve a slot on a battle server before full connect); plus a heartbeat thread and reconnect request type for connection resilience.
 keywords: [matchmaking, beacon, partybeacon, reservation, reconnect, heartbeat, watchdog, EClientRequestType, slot, lobby, connection]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E2, E5]
 ---
 
@@ -112,6 +112,33 @@ rank band for the session/battle-server it allocates.
 A server clock reference (`ServerTime`) is also exposed — used to align
 client/server timing (cf. the `ServerTimeStamp`/`ClientTimeStamp` movement
 replication in `08-*`); a backend should provide an authoritative time source.
+
+## Session search & join API model (E2)
+
+The client uses a **find-then-join** session model, **not** UE4's
+`StartMatchmaking` flow — confirmed by the guard strings *"StartMatchmaking is
+not supported on this platform. Use FindSessions or FindSessionById"* and
+*"CancelMatchmaking is not supported … Use CancelFindSessions"*. So the API is:
+
+| Op | Role |
+|----|------|
+| `FindSessions` | Query the matchmaker for joinable sessions (a playlist search). |
+| `FindSessionById` | Resolve a specific session (invite/squad-follow/rejoin). |
+| `CancelFindSessions` | Abort an outstanding search. |
+| `JoinSession` | Commit to a found session → triggers the beacon reservation. |
+
+**Join sequence (E2, callback order):** joining a new session first tears down
+any current one — `OnDestroyForJoinSessionComplete` → `OnEndForJoinSessionComplete`
+→ `OnJoinSessionComplete` (`bSuccess` per step). The front-end mirrors this with
+HSOG states `HSOGJoinSession_LeaveMatchmaking` / `_LeaveSession` /
+`_WaitingForLaunch` / `_Launch` (`gameplay/13-*`). A re-impl matchmaker exposes
+find/join (by query and by id), not a single blocking matchmake call.
+
+**Connection-retry policy (E2):** the beacon connect retries on failure
+(`ConnectionRetryDelay` between attempts) and a custom-session matchmake aborts
+after N failures (*"Custom Session: Stopping matchmaking: Connection failed %i
+times"*). So transient battle-server connect failures are retried client-side
+before surfacing an error.
 
 ## Custom / private sessions
 
