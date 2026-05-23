@@ -24,6 +24,7 @@ a re-implementer; this INDEX is the full catalogue.
 1. `methodology/clean-room.md` — rules everyone must follow.
 2. `engine/01-engine-identification.md` — what engine/version, why it matters.
 3. `binary/01-binary-overview.md` — the client executable at a glance.
+   (`binary/02-shipped-runtime-manifest.md` — exact runtime deps & versions.)
 4. `networking/00-architecture.md` — the big picture of how the game talks online.
 5. `networking/01-rest-backend.md` — the REST backend resource surface.
 6. `networking/02-websocket-netdriver.md` — realtime gameplay replication transport.
@@ -52,6 +53,7 @@ a re-implementer; this INDEX is the full catalogue.
 | `engine/06-rendering-audio-vr.md` | engine | draft | Middleware: Oculus/SteamVR HMD, forward+InstancedStereo+MultiRes+volumetric rendering, Wwise+Oculus HRTF audio. |
 | `engine/07-ai-bots.md` | engine | draft | Server-run bot AI (VkAI* cluster): behaviour states, navigation, abilities/ultimates; configured by match params. |
 | `binary/01-binary-overview.md` | binary | draft | PE layout, sections, build metadata, embedded toolchain. |
+| `binary/02-shipped-runtime-manifest.md` | binary | draft | NonUFS manifest: exact middleware versions (OpenVR 1.0.2, Steamworks 1.32, PhysX/APEX, Vorbis, GameWorks), build dates, Build.version. |
 | `networking/00-architecture.md` | net | draft | Three planes: REST backend, WebSocket replication, Steam/Oculus platform. |
 | `networking/01-rest-backend.md` | net | draft | VkRestUtils resource clients = backend REST API surface. |
 | `networking/02-websocket-netdriver.md` | net | draft | UE4 HTML5Networking WebSocketNetDriver over libwebsockets. |

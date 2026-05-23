@@ -29,6 +29,11 @@ not RE-ing gameplay/assets, per project scope).
 Plugins: `DirectInputPlugin` (HOTAS/joystick), `TrackIR` (head tracking),
 `TobiiEyetracking` (eye tracking) — peripheral input, not networking.
 
+Shipped third-party middleware (exact versions in `binary/02-shipped-runtime-
+manifest.md`): OpenVR v1.0.2, Steamworks v1.32, PhysX 3 + APEX (Clothing/
+Destructible) physics, NvVolumetricLighting, Oculus Wwise spatializer, Ogg/Vorbis,
+Tobii — all client/engine-local, no backend relevance.
+
 ## Networking class quick-reference
 
 | Class | Role | Doc |
