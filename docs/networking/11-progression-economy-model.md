@@ -22,6 +22,11 @@ groupings/relationships are partly inferred (E5).
 - Held in a per-pilot wallet: `Currencies` / `balance`. Store purchases
   (`VkVirtualGoods`, `stores/{id}/offers/`) and loot (`VkLootCapsuleResource`)
   debit/credit these. `refund_for_hero_ship_name` indicates a refund path.
+- **Real-money top-up** of Gold went through the **platform store**, not the VGS
+  backend: the Oculus build links Oculus-Store IAP (`ovr_IAP_LaunchCheckoutFlow`/
+  `GetProductsBySKU`/`GetViewerPurchases`, E1, `07-*`); the Steam build the Steam
+  equivalent. A preservation backend cannot honor these (they were store
+  transactions); it can only grant/seed the resulting currency balances.
 
 ## Match rewards (post-battle grant)
 

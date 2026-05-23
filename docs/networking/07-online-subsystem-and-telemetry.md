@@ -78,6 +78,54 @@ This is the integration seam a private server must satisfy: emulate what
 `OnlineIdentityVk`/`OnlineSessionVk` expect from the backend, and the engine
 side behaves normally.
 
+## Platform-SDK call surface (E1, import-confirmed)
+
+The delay-import tables (`binary/01-*`) name the **exact** platform-SDK entry
+points the client calls — promoting several inferences above to E1 facts.
+
+**Oculus Platform SDK** (`LibOVRPlatform64_1.dll`, 40 imports) — the `VkOculusPlatform`
+backing:
+- **Entitlement gate:** `ovr_Entitlement_GetIsViewerEntitled` — Oculus-store DRM
+  (verify the user owns the title) before play.
+- **Identity → backend bridge:** `ovr_User_GetLoggedInUser`, `…GetID`,
+  `…GetOculusID`, `…GetAccessToken`, `…GetUserProof` (nonce). This is the
+  concrete source of the **Oculus grant** material that `OnlineIdentityVk`
+  exchanges for the VGS JWT (`03-authentication.md`): access-token + user-proof
+  nonce + Oculus id/callsign.
+- **Friends/presence:** `ovr_User_GetLoggedInUserFriends`, `ovr_User_GetPresence`,
+  `…GetInviteToken` — confirms the friends/invite graph is **platform-sourced**.
+- **In-app purchase (Oculus Store):** `ovr_IAP_GetProductsBySKU`,
+  `ovr_IAP_GetViewerPurchases`, `ovr_IAP_LaunchCheckoutFlow`, Product/Purchase
+  arrays + `ovr_Product_GetFormattedPrice`. So real-money purchases on the Oculus
+  build go through **Oculus Store IAP** (by SKU), parallel to the in-game
+  currency/store economy (`networking/11-*`). A preservation backend doesn't
+  serve these — they were platform-store transactions.
+
+**Steam SDK** (`steam_api64.dll`, 22 imports):
+- **Client:** `SteamUser`, `SteamFriends`, `SteamUserStats`, `SteamRemoteStorage`
+  (cloud saves), `SteamApps` (ownership/DLC), `SteamMatchmaking`, `SteamUtils`,
+  `SteamAPI_RestartAppIfNecessary` (Steam DRM relaunch). The Steam session ticket
+  for the `steam_ticket` grant comes from here.
+- **Server:** `SteamGameServer`, `SteamGameServer_Init`, `SteamGameServerStats`,
+  `SteamGameServerNetworking`, `SteamGameServerUtils`, `SteamMatchmakingServers` —
+  the **game-server** half of the Steam SDK is in the *same* EXE. Strong evidence
+  the dedicated battle server (`networking/05-*`) is this binary launched in
+  server mode, registering with Steam's game-server backend.
+
+**HMD service client** (`hmd_client.dll`, 8 imports): `hmdclientConnect`/
+`Disconnect`/`RequestServerVersion`/`GetHMDInfo2000`/`GetHMDViewStatus`/
+`GetTrackerStates` — an IPC client to a local **HMD runtime service** (connect →
+query HMD info / tracker poses / view status). Despite the `ThirdParty/PS4` path
+name (`binary/02-*`), the calls are a generic HMD-service IPC; recorded
+factually, no PSVR-on-PC claim.
+
+**Tobii** (`Tobii.GameIntegration.dll`): `Start`/`Stop`/`Update`,
+`GetNewGazePoints`, `GetNewHeadPoses`, `GetUserPresence`, `UpdateInteraction`,
+`InfiniteScreen*` — gaze + head-pose + presence + the "infinite screen"
+extended-view feature (`engine/03-*`). **OpenVR** (`openvr_api.dll`) imports only
+`VR_InitInternal`/`GetInitToken`/`IsInterfaceVersionValid`/`ShutdownInternal` —
+the rest of SteamVR is reached through UE4's plugin internally.
+
 ## Telemetry / Analytics (engine-stock, E2/E5)
 
 Analytics use Unreal's **`AnalyticsProviderET`** ("ET" = Epic Telemetry),
@@ -108,8 +156,9 @@ own path templates remain undetermined (open question).
 
 ## Open questions
 
-- The exact UE4 interfaces `OnlineSubsystemVk` implements beyond identity/
-  session/presence (friends? external UI? voice via the Oculus spatializer?).
 - How `OnlineSessionVk` maps `CreateSession`/`FindSessions`/`JoinSession` to the
   REST resources + PartyBeacon (the precise call sequence).
-- Whether presence is backend-driven or platform-driven.
+
+Resolved by the import surface above: friends/presence/invites are **platform-
+sourced** (Oculus `ovr_User_*` / Steam `SteamFriends`); the Oculus grant material
+is access-token + user-proof nonce (`03-*`); IAP is Oculus-Store-backed.

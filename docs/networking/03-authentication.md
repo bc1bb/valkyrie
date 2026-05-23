@@ -56,7 +56,11 @@ grant_type=refresh_token&refresh_token=<refresh token>
 Notes:
 - `intellectual_property=VALKYRIE` namespaces the request to this title.
 - The Steam ticket is obtained via Steamworks `GetAuthSessionTicket`; the Oculus
-  triplet (user id + nonce + callsign) via the Oculus Platform SDK.
+  triplet (user id + nonce + callsign) via the Oculus Platform SDK — the exact
+  calls are **import-confirmed** (E1, `binary/01-*`/`07-*`): `ovr_User_GetID`
+  (→ `oculus_user_id`), `ovr_User_GetUserProof` (→ `oculus_nonce`),
+  `ovr_User_GetOculusID` (→ `oculus_callsign`); `ovr_User_GetAccessToken` is also
+  available for token-based variants.
 - The token endpoint **requires HTTP Basic auth** with the app's OAuth
   `client_id`/`client_secret` — **confirmed live (E4)**: an unauthenticated
   `POST /oauth/token` to the live host returns **401** (see

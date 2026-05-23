@@ -11,10 +11,14 @@ evidence: [E2]
 # Dedicated Battle-Server Launch Contract
 
 The same client executable doubles as a **dedicated game server** (standard UE4
-pattern). The backend match-orchestration layer launches a server process for
-each match and configures it via **command-line arguments** (E2 — all observed
-as `-NAME=` parameter strings in the binary). This is the contract a
-re-implemented orchestrator must reproduce to host matches.
+pattern) — now **import-confirmed** (E1): the EXE links the Steamworks
+**game-server** half (`SteamGameServer`, `SteamGameServer_Init`,
+`SteamGameServerStats`, `SteamGameServerNetworking`, `SteamMatchmakingServers`;
+`binary/01-*`/`07-*`), not just the client SDK, so one binary serves both roles.
+The backend match-orchestration layer launches a server process for each match
+and configures it via **command-line arguments** (E2 — all observed as `-NAME=`
+parameter strings in the binary). This is the contract a re-implemented
+orchestrator must reproduce to host matches.
 
 ## Match identity & transport args
 
