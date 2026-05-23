@@ -89,6 +89,20 @@ valuable next deliverable is therefore no longer more docs but the **first
 bring-up** (a minimal SSO + stub backend + a booting client), which converts the
 (B) unknowns from "blocked" to "iterate."
 
+## Update (2026-05-23): bring-up started
+
+- A **runnable reference backend** now exists (`reimpl/mvp-server/`) — SSO +
+  envelope-wrapped VGS REST, validated 8/8 against a mock client over TLS. This
+  is the "minimal SSO + stub" half of the first bring-up.
+- A **client launch attempt** on the analysis box (iGPU UHD630, headless X, no
+  VR) was made via Proton: DXVK/Vulkan init OK, but the **client hangs in
+  earliest UE4 pre-init** (empty config handles, no log written, even with
+  `-nullrhi -NOSTEAM -abslog`). So this hardware **cannot** be the live oracle;
+  the client+backend loop needs a GPU/headset host. (Details in
+  `reimpl/mvp-server/README.md`.)
+- Net: bucket-A done + backend built; **bucket-B is now hardware-blocked here**,
+  not knowledge-blocked.
+
 ## Test-harness docs that would help (not yet written)
 
 - A **fixture set** of canned envelope+content responses per P0 resource (from
