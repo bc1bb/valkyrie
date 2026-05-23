@@ -4,7 +4,7 @@ title: WebSocket Replication Transport
 summary: Realtime gameplay uses UE4's HTML5Networking WebSocketNetDriver over libwebsockets (TCP), not the default UDP IpNetDriver.
 keywords: [websocket, netdriver, replication, libwebsockets, html5networking, ue4, transport, gameplay, rpc]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E1, E2, E5]
 ---
 
@@ -93,7 +93,15 @@ server          : spawn player; NMT_NetGUIDAssign for object-ref GUIDs
   exact on-wire header with a capture if strict, but the contract is "no
   specific subprotocol".)
 - WebSocket path/URL the client connects to (provided by
-  `VkBattleServerResource`, Plane 1 — see `01-rest-backend.md`).
+  `VkBattleServerResource`, Plane 1 — see `01-rest-backend.md`). **Refined (E2):**
+  the backend returns a **`battleServerUri`** field (= the server-side
+  `-BATTLESERVER_URI=` arg, `05-*`); the client's **`ConnectToBattle`** hands it
+  to UE4's standard `Browse`/`UPendingNetGame` path, which opens the
+  `WebSocketNetDriver` and sends the control-channel hello (*"UPendingNetGame::
+  InitNetDriver: Sending hello"*). Host/port are parsed `host:port` (the
+  `%255[^:]:%d` scanf form). So the connect URL is a **stock UE4 connect URL**
+  built from `battleServerUri` — a re-impl just needs to return a reachable
+  `ws(s)://host:port` there; the engine does the rest.
 - Whether the WS uses TLS (`wss://`) or plain `ws://`, and on what port.
 - Any pre-login app-level token check layered on UE4's `NMT_Login` (e.g. the
   backend join token from battle-server allocation).

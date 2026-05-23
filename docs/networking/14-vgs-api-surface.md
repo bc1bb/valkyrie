@@ -4,7 +4,7 @@ title: VGS REST API — Full Recovered Surface
 summary: Comprehensive API surface recovered from the binary's backend FString cluster — multi-tenant URL scheme, resources/paths, content types, pilot HATEOAS graph, session/battle objects, full stats vocabulary, cosmetic & game-mode taxonomies, client fingerprint, local Watchdog & battle-server registration.
 keywords: [vgs, rest, api, tenant, valkyrieapi, paths, resources, pilot, session, battle, stats, cosmetics, watchdog, battleserver, fingerprint, throttle, fstring]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E2, E3]
 ---
 
@@ -67,6 +67,23 @@ header (`Authorization`). Tokens: `access_token`, `refresh_token`, `expires_in`,
 Common query params: `region=%s`, `&pilots=`, `?team=`, `&sortby=`,
 `leaderboard=`, `host_pilot_ids=%s`, `password=%s`, `?properties=`, `version=%s`,
 `&%s`, `%s=%s`.
+
+### Entry-points vs HATEOAS — a key fact for a re-impl (E2/E3)
+
+Only a **handful of paths are hardcoded** in the client (the literals above:
+`/oauth/token`, `v2.0/valkyrie/accounts/`, `%spilots?pilot_id=`, `v2.0/valkyrie/
+stores/7/offers/`, `v1.0/valkyrie/notifications/oculus`, the leaderboard
+templates). **Everything else is followed from `*_uri` links** the server returns
+(HATEOAS, `13-*`: the pilot object alone carries ~20 `*_uri` links). Two
+consequences for a private backend:
+- It must serve the few **entry-point** paths at the exact literals above.
+- For all other resources it **controls the paths itself** — the client uses
+  whatever absolute/relative `*_uri` the server emits, so the link graph need not
+  match CCP's original paths. This greatly relaxes route-fidelity requirements.
+
+**Version coexistence:** `v1.0` and `v2.0` prefixes both appear (accounts/stores
+are `v2.0`; notifications `v1.0`) — version is **per-resource**, not global. A
+re-impl should honor the literal version in each entry-point path.
 
 ### HTTP verbs per resource (E3, approximate)
 
