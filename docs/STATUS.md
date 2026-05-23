@@ -4,7 +4,7 @@ title: Preservation Status & Confidence Map
 summary: Bird's-eye view for a re-implementer — what's known at what evidence tier (E4 verified → E5 inferred), what's blocking vs done, and the prioritized next actions. Snapshot of project completeness.
 keywords: [status, confidence, evidence, coverage, summary, handoff, priorities, blocking, verified, capture]
 status: living
-updated: 2026-05-22
+updated: 2026-05-23
 ---
 
 # Preservation Status & Confidence Map
@@ -19,6 +19,8 @@ embedded strings/symbols · **E3** static disassembly · **E4** live observation
 | Area | Coverage | Top tier | Notes / gap |
 |------|----------|----------|-------------|
 | Engine identity (UE 4.14.3, codename Vk) | ✅ complete | E1 | Verified from `Build.version` + paths. |
+| Binary/runtime deps + import surface | ✅ complete | E1 | Manifest (exact middleware versions), full import table (WS2_32/WinINet/Vulkan/MediaFoundation/PhysX), version resource. `binary/01-*`,`02-*` |
+| Platform SDK call surface (Oculus/Steam) | ✅ complete | E1 | Entitlement, identity→grant bridge, IAP, SteamGameServer (same-binary server). `07-*` |
 | Backend hosts / DNS topology | ✅ complete | **E4** | SSO alive (Cloudflare); `valkyrieapi.com` NXDOMAIN; Chaos DNS up. `12-*` |
 | Auth — endpoint, POST-only, Basic-auth req'd | ✅ verified | **E4** | Live 401 confirms Basic client auth. `03-*`,`12-*` |
 | Auth — grants, scopes | ✅ strong | E2/E3 | Grant bodies + token resp recovered. |
