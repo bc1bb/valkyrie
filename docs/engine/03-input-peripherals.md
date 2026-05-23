@@ -4,7 +4,7 @@ title: Input & Peripheral Subsystems
 summary: Beyond gamepad/VR controllers, the client integrates DirectInput HOTAS flight sticks (Thrustmaster, axes/FFB/deadzones), TrackIR head tracking (NaturalPoint NPClient), and Tobii eye tracking (GTOM gaze-to-object + foveated rendering).
 keywords: [input, peripherals, directinput, hotas, joystick, thrustmaster, trackir, naturalpoint, tobii, eyetracking, gaze, foveated, gamepad]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E1, E2]
 ---
 
@@ -67,7 +67,11 @@ cockpit (head pose → camera/aim look). Local-only.
 Ships its own DLLs (`Tobii.GameIntegration.dll`, `tobii_stream_engine.dll`) and
 integrates the Tobii **GameIntegration** SDK. Features (E2):
 - **Gaze** input and **GTOM** = *Gaze-To-Object-Mapping* (resolve what the
-  player is looking at — e.g. target selection by gaze).
+  player is looking at — e.g. target selection by gaze). GTOM **scores** each
+  candidate object by its distance from the **center gaze ray**, decaying with
+  distance down to a floor (E2: "*each extra score … decayed … depending on its
+  distance from the center ray; the score cannot drop below this amount*"); the
+  highest-scoring object is the gaze target. A debug cvar visualizes GTOM scores.
 - **Foveated depth-of-field** (`FoveatedDepthOfFieldMode` + near-field
   tuning params) — render/post effects driven by gaze position.
 

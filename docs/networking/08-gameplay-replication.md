@@ -4,7 +4,7 @@ title: In-Match Gameplay Replication (RPC Surface)
 summary: Categorized inventory of replicated RPCs over the WebSocket NetDriver — movement (engine-stock), combat, spectator, match-flow, vehicle, voice. Defines what a re-implemented game server must accept/emit.
 keywords: [replication, rpc, server, client, multicast, movement, combat, spectator, vehicle, voice, gameplay, netdriver]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E2, E5]
 ---
 
@@ -56,10 +56,22 @@ RPCs hint at a demo/kiosk ("show floor") match-flow path alongside normal play.
 `ServerSetPlatformUniqueName`. "Vehicle" = the player's ship; selection/preview
 is replicated to the server (loadout enforced server-side).
 
-## Voice
+## Voice (UE4 VOIP + Opus, E2)
 
-`ServerUnmutePlayer` (and the implied mute counterpart) — UE4 voice mute state
-is replicated. Voice itself likely rides the Oculus/Wwise audio path.
+`ServerUnmutePlayer` (+ the mute counterpart) — voice mute state is replicated.
+**Resolved (E2):** voice is **UE4's built-in VOIP**, not a platform relay:
+- **Opus codec** — `opus_packet_get_nb_frames`/`…nb_samples` decode voice packets
+  (Opus is UE4's standard voice codec).
+- Packets route through the net layer: `AddVoicePacket: … to=%s from=%s` (per-
+  talker routing), with `RegisterLocalTalker`/`RegisterRemoteTalker` /
+  `Mute`/`Unmute`/`UnregisterRemoteTalker` — the engine-stock UE4 voice interface.
+- **Push-to-talk** is configurable: `bRequiresPushToTalk`
+  (`[/Script/Engine.GameSession]` in `DefaultGame.ini`); `MaxLocalTalkers`/
+  `MaxRemoteTalkers` (`OnlineSubsystem` in `DefaultEngine.ini`).
+
+So voice rides the standard UE4 VOIP path over the game connection (not Wwise/
+Oculus audio, which is output-side spatialization). A re-impl server on the same
+engine inherits VOIP packet relay + the mute RPCs for free.
 
 ## Comms — quick-chat & call-ins (E2)
 
@@ -160,4 +172,5 @@ be reproduced to make matches behave correctly.
 
 - Replicated property layout per ship/pawn (needs class-layout analysis).
 - Anti-cheat / server-side validation strictness on `ServerMove`/fire.
-- Whether voice audio is networked separately (VOIP) or platform-relayed.
+- ~~Whether voice audio is networked separately (VOIP) or platform-relayed.~~
+  **Resolved:** UE4 built-in VOIP (Opus), push-to-talk configurable (see Voice).
