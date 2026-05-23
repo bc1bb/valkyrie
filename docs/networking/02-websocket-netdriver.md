@@ -64,18 +64,20 @@ server          : spawn player; NMT_NetGUIDAssign for object-ref GUIDs
 
 - **Version gate:** `EngineNetworkVersion` + `GameNetworkVersion` must match
   (UE 4.14.3 / CL 3195953, `engine/01-*`) or the handshake aborts.
-- **Vk seam — capability-token connection auth (E2):** the battle connection
-  (`ConnectToBattle` / `eOnConnectingToServer_Event`) is authorized by a
-  **capability-token** system, not a bare string: fields `AuthTokenTBS`/
-  `AuthTokenTBE` and `CapTokenData`/`CapTokenSeq`/`CapTokenTBS`/`CapTokenTBE`/
-  `CapTokenTBEX` (TBS = *to-be-signed*, TBE = *to-be-encrypted*) — i.e. a signed
-  (and partly encrypted) capability token with a sequence number. This is the
-  app-level join authorization layered on UE4's `NMT_Login` (the token rides in
-  the login options / `UniqueNetId` payload). These are USTRUCT/UPROPERTY
-  reflection field names (no direct code xref), so the **exact wire layout and
-  signing** need a capture or deeper struct RE — but the *mechanism* is a
-  signed capability token (`CapToken`), consistent with CCP/Carbon platform tech.
-  A re-impl battle server validates this token to admit the client.
+- **Battle connection auth (E2/E5):** the battle connection is initiated via
+  `ConnectToBattle` / `eOnConnectingToServer_Event`. The app-level join
+  authorization is layered on UE4's `NMT_Login` — the join credential (the
+  backend-issued JWT/session token from `03-*`/`06-*`) rides in the login
+  options / connect-URL of the WebSocket connect. The **exact wire layout** of
+  the join token still needs a capture (E4) or deeper struct RE.
+  > **Correction (2026-05-23):** an earlier draft here claimed a Valkyrie
+  > "capability-token" system from the strings `CapTokenTBS`/`AuthTokenTBE`/
+  > `CapTokenSeq`/etc. **That was a false positive.** Those are the `setct-*`/
+  > `setAttr-*` **SET (Secure Electronic Transaction) ASN.1 OID names** built
+  > into statically-linked **OpenSSL**'s object table (164 `setct-` + the full
+  > `setAttr-` set are present, e.g. `setct-PANData`, `setct-OIData`) — a
+  > linking artifact, *not* game code. No evidence of a bespoke CapToken system
+  > remains; treat the join auth as the standard backend token over `NMT_Login`.
 - Everything else is documented UE 4.14 behaviour; a re-impl built on the same
   engine inherits it. Reuse the public engine to satisfy the handshake.
 

@@ -77,8 +77,10 @@ transport + handshake shape, anti-cheat posture (none blocking). The
 **Needs one live capture each (E4) to finalize — not blocking design, only
 exact bytes:**
 - Per-resource JSON **value types / deep nesting** (names+grouping known, E3).
-- `NMT_Login` join auth = a **capability token** (`CapToken`/`AuthToken`,
-  signed/encrypted — `02-*`); exact wire layout/signing still needs capture.
+- `NMT_Login` join auth: the backend token (JWT/session) carried in the connect
+  login options (`02-*`); exact wire layout still needs capture. *(Corrected: the
+  earlier "CapToken capability-token" reading was an OpenSSL SET-OID false
+  positive — see `02-*`.)*
 - Whether the active **tenant** subdomain is fixed or derived.
 
 **Resolved since (E3, via disassembly):** `client_id`=`valkyrieClient` (public,
