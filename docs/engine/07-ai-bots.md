@@ -65,6 +65,12 @@ oscillation. Factor names recovered (the float *weights* are balance/pak):
 | `FavourPlayersOverBots` | Prefer human players over other bots. |
 | `FavourPlayersAbility` | Bias toward players (e.g. using/threatened by abilities). |
 
+Before weighting, candidates pass a **validity gate** (E2 debug: *"Assessing
+Valid Target %s MoveState:%d Health:%.2f TargPlayers:%d TargAI:%d Cloaked:%d"*) —
+i.e. the bot considers a target's move-state, health, player-vs-AI class, and
+**cloak** state when deciding if it's a valid target at all (cloaked ships are
+harder/invalid to lock), then ranks the valid set by the weights above.
+
 **Deadlock guard:** `PotentialDeadLockTimer` + `DeadLockDetectionTime` detect a
 bot flip-flopping between equally-weighted targets and break the tie (the
 `DeadLockTarget` log dumps these alongside the Favour weights). So the AI picks a
