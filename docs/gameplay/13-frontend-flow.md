@@ -43,6 +43,14 @@ scene: `SceneManager_SquadInvitation` / `_AcceptInvitation` / `_InviteAcceptFail
 dropout). Animated scene-to-scene transitions use `UVkVrUiSceneTransition` /
 `VkHoloSceneTransition`.
 
+## Boot cinematics (E1)
+
+Before the front-end scenes, two cooked **`.mp4`** movies play
+(`VkGame/Content/Movies/`): `Generic_Launch_SEQ` (startup/legal sting) and
+`Introduction_Cinematic`. Playback is via UE4's **Media Foundation** player
+(`MF.dll`/`MFPlat.DLL` delay-loaded, `binary/01-*`) — i.e. the engine startup-
+movie path, not a gameplay scene. Local-only, no backend.
+
 ## Screen catalogue
 
 Grouped by phase. "Drives" lists the backend resource(s) the screen reads or

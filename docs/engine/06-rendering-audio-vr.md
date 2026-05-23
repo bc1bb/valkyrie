@@ -29,8 +29,10 @@ EVE Valkyrie is **VR-first**. HMD support (E2):
 ## Rendering
 
 UE 4.14 rendering tuned for VR (E2):
-- **RHI**: Direct3D **11** and **12** (both present; `d3d11`/`d3d12`, also the
-  `-d3d11`/`-d3d12` flags). OpenGL imported but D3D is the Windows path.
+- **RHI**: Direct3D **11** (default, static import) and **12** (opt-in, delay-
+  loaded; `-d3d11`/`-d3d12` flags). OpenGL imported but D3D is the Windows path.
+  A **Vulkan** RHI is also present (delay-loaded `vulkan-1.dll`, 106 imports;
+  `binary/01-*`) — UE 4.14's experimental Vulkan, shipped but non-default.
 - **Forward shading** (`ForwardShading`) — UE4's forward renderer, preferred for
   VR (MSAA + lower latency) over the default deferred path.
 - **InstancedStereo** — single-pass stereo rendering (both eyes in one pass).

@@ -11,9 +11,15 @@ evidence: [E1, E2]
 # REST Backend Surface — `VkRestUtils`
 
 The `VkRestUtils` module is the client's HTTP(S) backend layer (libcurl +
-OpenSSL). Each `Vk*Resource` class wraps one backend resource. Their existence
-and naming (E1) directly enumerates the backend API surface. Exact paths,
-verbs, and JSON schemas are not yet captured (open questions).
+OpenSSL — corroborated by libcurl's import fingerprint in `binary/01-*`). Each
+`Vk*Resource` class wraps one backend resource. Their existence and naming (E1)
+directly enumerates the backend API surface. Exact paths, verbs, and JSON
+schemas are not yet captured (open questions).
+
+> **Two HTTP paths coexist** (import-table evidence, `binary/01-*`): the VGS REST
+> client here rides **libcurl**, while UE 4.14's stock HTTP module is **WinINet**-
+> backed (`WININET.dll` imports) — so engine-level HTTP such as Epic's telemetry
+> DataRouter (`07-*`) can use WinINet independently of VkRestUtils' libcurl.
 
 ## HTTP plumbing classes
 
