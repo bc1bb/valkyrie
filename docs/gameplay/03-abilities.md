@@ -4,7 +4,7 @@ title: Abilities, Ultimates & Buffs
 summary: The player ability system — VkAbility_* active-ability roster + VkUltimate_* roster, the VkActivatableEffect activation/cooldown lifecycle, per-ability state machines, the loadout slot model (EVkInventorySlot), and specific abilities (SpiderBot, Micro-Warp-Drive, EMP/ECM/EMS, BuffBeam).
 keywords: [abilities, ultimate, buff, cooldown, charge, activatable effect, spiderbot, emp, ecm, ems, micro warp drive, mwd, nova bomb, overcharge, shield stripper, buffbeam, loadout slot]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E1, E2]
 ---
 
@@ -53,6 +53,19 @@ track `UltimateCharge` (a charge meter that fills over the match) and reference
 their concrete class via `UltimateClass`. There are upgrade hooks
 (`CooldownTimeUpgradeRTPC`, `DurationUpgradeRTPC`) that scale these values from
 the upgrade/loadout data.
+
+**Tag-based cooldowns + charges (E2):** cooldowns are applied via a **tag**
+system — `AddCooldownTagDuration` registers a named `CooldownTag` for a duration,
+and `bActivatesCooldown` marks whether an activation triggers it. This lets
+several abilities share or gate on a common cooldown tag (not just per-ability
+timers). Charge-based abilities track `ActiveCharges` (multiple stored uses that
+deplete and recharge) alongside the single-shot path. An activation gate
+`bCanActivateWhileWarping` controls whether an ability is usable mid-warp. The
+`AVkCooldownTimerBar` HUD widget visualizes the active cooldown tag.
+
+**Flares / countermeasures (E2):** `ActiveFlares` + `bDestroysOnFlareExpired`
+model decoy flares — deployed flares that decoy/destroy incoming missiles and are
+cleaned up when they expire (cf. `CounterMeasures` ability, `engine/07-*`).
 
 ### HUD / presentation classes (E1/E2)
 

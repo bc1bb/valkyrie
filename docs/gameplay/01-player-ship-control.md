@@ -4,7 +4,7 @@ title: Player / Ship Control & Scoring
 summary: How a player flies a ship — VkPlayerController/VkPawn/VkVehicle + movement components (flight model), cockpit, carrier launch, orientation; plus the full VkPlayerScoreObjective_* scoring-event taxonomy.
 keywords: [player, ship, vehicle, pawn, controller, movement, flight, cockpit, launch tube, orientation, scoring, score objective, killstreak, capture]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E1, E2]
 ---
 
@@ -51,7 +51,11 @@ the float *values* are balance data in the pak, out of scope). This describes
 - **Energy pool (`EnergyComponent`):** a shared resource —
   `EnergyRechargeAmountPerSecond`, `EnergyUsePerSecond`/`EnergyUseOnActivate`/
   `EnergyRequired` — that **gates boost, brake, and abilities** (the `Energy`
-  replicated property, `08-*`; abilities in `gameplay/03`).
+  replicated property, `08-*`; abilities in `gameplay/03`). Recharge is **state-
+  dependent** (E2): `RechargeScalarWhenEmpty` / `RechargeScalarWhenFull` scale the
+  rate by how full the pool is (e.g. faster refill when depleted), and
+  `BonusRechargeScalarWhileBraking` gives a recharge bonus while braking — so
+  braking trades speed for faster energy regen.
 - **Assist:** `DriftCorrection`/`DriftCorrectionPercentage` (auto drift-correct).
 
 This is an arcade-leaning 6-DoF model: curve-shaped torque rotation with clamps,

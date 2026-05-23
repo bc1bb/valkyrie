@@ -4,7 +4,7 @@ title: Progression & Economy Backend Model
 summary: Backend-served player-state model — dual currency (Silver/Gold), match reward breakdown, ranks, and the loadout/cosmetic/implant/hero-ship customization data the server must persist and return.
 keywords: [progression, economy, currency, silver, gold, rewards, rank, loadout, cosmetic, implant, hero ship, skin, decal, paintjob, variant, backend]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E2, E5]
 ---
 
@@ -58,6 +58,20 @@ state (what this pilot has/equips):
 - **Implants**: `implant`, `implant_seconds` — **time-limited** gameplay
   modifiers (note `_seconds`: implants are consumable/duration-based, not
   permanent). (`VkImplantResource`.)
+
+## Challenges & Daily Challenges (backend-served, E2)
+
+Two tiers of objective-based progression:
+- **Challenges** — the general challenge objects (`challenge_id`, thresholds,
+  rewards) recovered in `13-*` (the `active_challenges` list on the pilot).
+- **Daily Challenges** — a distinct **time-gated** system (`AVkVrUiScene_
+  DailyChallenge_Base`, `DailyChallenges`, slots). Each has a **difficulty**:
+  `EVkDailyChallengeDifficulty` = **Easy / Normal / Hard**. States include
+  `DailyChallenge_Completed` / `_Empty`; the backend pushes refreshes via
+  `EVkBackEndPlayerStatsRefresh_DataType::DAILY_CHALLENGES_UPDATED`, and the
+  notification/CAT system links to them (`Daily_Challenge_Link`). A backend
+  serves a per-day set of challenge slots (by difficulty) and tracks
+  completion/grant; surfaced in the hangar (`gameplay/13-*`).
 
 ## Re-implementation value
 
