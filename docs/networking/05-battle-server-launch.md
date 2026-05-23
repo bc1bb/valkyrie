@@ -4,7 +4,7 @@ title: Dedicated Battle-Server Launch Contract
 summary: The backend spins up a dedicated UE4 game-server process per match, passing match identity, JWT, public IP/region, team & AI config via command-line args (-BATTLEID, -BATTLESERVER_URI, -JWT, -PUBLICIP, -REGION, -NUMAITEAM*, etc).
 keywords: [battle server, dedicated server, launch args, command line, matchmaking, jwt, battleid, region, publicip, teams, ai, orchestration]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E2]
 ---
 
@@ -134,6 +134,23 @@ Diagnostic strings expose the server boot/registration path:
   manager feeds the match-result report, `gameplay/01`/`11-*`).
 - **Team fill:** *"Failed to assign player to team - probably no spaces left on
   server"* — server-side team assignment with capacity limits.
+
+## server→VGS call inventory (what the backend must accept from the server, E2/E3)
+
+Consolidated: the dedicated server (authed by its `-JWT`) makes exactly these
+backend calls — a re-impl backend must accept them:
+
+| When | Call | Resource | Payload / ref |
+|------|------|----------|---------------|
+| Boot | **Register** itself | `POST battleservers` | host fingerprint + `public_ip`/`port`/`battle_id`/`map`/`game_mode` (`13-*`). |
+| Boot+ | **Update** registration | `PUT battleservers` | capacity/state updates (`bUpdateOnDedicatedServer` gates server-only updates). |
+| Lifecycle | **Report battle state** | `battles` | `LobbyStarted`/`MatchStarted`/`PlayerJoined`/`PlayerDisconnected`/`SetMaxPlayers`/`MatchNotJoinable`/`MatchEnded`/`MatchKilled`/`EndBattle` (above). |
+| Match end | **Submit match-result report** | `POST` (battles/results) | `{battle_id, pilot_id, team_id, battle_stats, player_stats{...objective_*}}` → backend returns the rewards object (`13-*`/`11-*`). |
+| Periodic | **Heartbeat** | `VkWatchDog`/`heartbeat_uri` | liveness ping (`06-*`/`14-*`). |
+
+Everything else (auth, pilot, static-data, matchmaking) is **client→VGS**, not
+server→VGS. So a backend's server-facing surface is small: accept registration +
+lifecycle + result report + heartbeat, all JWT-authed.
 
 ## Re-implementation value
 

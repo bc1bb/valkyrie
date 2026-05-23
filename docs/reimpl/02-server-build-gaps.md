@@ -28,10 +28,10 @@ These can be documented today with the existing tools (`recover_object.py`,
 | Gap | Why it matters to a server | Method to close |
 |-----|----------------------------|-----------------|
 | ~~**Exact REST route templates**~~ **(largely closed)** | The server must route the real paths. | **Done (E2/E3, `14-*`):** only a few **entry-points** are hardcoded; everything else is HATEOAS `*_uri` the server controls. Base URL `{scheme}://{tenant}.{domain}/{version}/valkyrie/{resource}`; versions are per-resource (v1.0/v2.0). |
-| **server→VGS call set** (what the *dedicated server* itself POSTs) | A re-impl backend must accept the server's lifecycle/registration calls, not just the client's. | Partly done (`battles` lifecycle, `battleservers` reg — `05-*`/`13-*`); finish by disasm of the server-only resources. |
-| **HTTP status → client behavior contract** | Knowing 401→refresh, 409→conflict, version-gate etc. lets the server drive client flows deterministically. | String/disasm pass on the response handlers (partial: 401-refresh, incompatible-build gating known). |
+| ~~**server→VGS call set**~~ **(closed)** | A re-impl backend must accept the server's lifecycle/registration calls. | **Done (`05-*`):** small fixed set — register (`POST battleservers`) + update (`PUT`) + battle lifecycle (`battles`) + match-result report (→ rewards) + heartbeat. All JWT-authed. |
+| ~~**HTTP status → client behavior contract**~~ **(closed)** | Knowing 401→refresh, version-gate etc. lets the server drive client flows. | **Done (`01-*`):** expiry→refresh grant; no refresh→relogin; incompatible-build→register refused; connect→retry; missing JSON fields tolerated; server-side `PreLogin` join gate. |
 | ~~**WebSocket connect URL format**~~ **(closed for URL; token still open)** | The Plane-1→Plane-2 handoff; the server hands the client this URL. | **Done (E2, `02-*`/`05-*`):** backend returns `battleServerUri`; client `ConnectToBattle` → UE4 `Browse`/`PendingNetGame` opens the `WebSocketNetDriver` (`host:port`). It's a **stock UE4 connect URL** — return a reachable `ws(s)://host:port`. (The join *token* placement in `NMT_Login` is still bucket-B.) |
-| **Static-data file taxonomy** (what *categories* of files `GetFileList` returns) | Static data is **P0** (likely gates load). Names recovered; the set/contents aren't. | Disasm the static-data loader's expected `StaticDataUniqueName`s; the file *contents* are in the pak (out of scope) but the **list shape** is recoverable. |
+| ~~**Static-data file taxonomy**~~ **(closed for shape/categories)** | Static data is **P0** (gates load — confirmed login-blocking). | **Done (`10-*`):** it's a versioned name↔entry dictionary; categories incl. `ShipClassStaticData`, `UpgradeStaticData`, game-modes (resolve `-gamemode=` by unique/short-name), maps, challenge links (by ID+Name). Backend must define every unique-name the pilot/session/challenge objects reference. File *bytes* are in the pak (out of scope). |
 | **Remaining per-resource field sets** (thin resources) | Completeness of the object model. | `recover_object.py` on any not-yet-anchored resource (the object model is already audited "complete" in `13-*`, but value-types remain — see B). |
 
 ## B. Needs the live client as an oracle (runtime — client runs, servers don't)
@@ -80,9 +80,12 @@ From `09-*` priorities, crossed with the above:
 4. **In-match** (engine-stock, free) — runs as shipped.
 5. Everything else (store/loot/leaderboards/challenges/daily-challenges) — stubs.
 
-So: **(A) is documentation work that can proceed immediately; (B) is gated only
-on running the client once; (C) is not "documentation" at all — it's design
-freedom.** The most valuable next deliverable is not more docs but the **first
+So: **(A) is now closed** (route model, connect-URL, server→VGS call set, HTTP
+status contract, static-data taxonomy — all documented as of 2026-05-23, save the
+small remainder of disassembling a couple of thin per-resource builders for exact
+value-types, which overlaps bucket B). **(B) is gated only on running the client
+once; (C) is not "documentation" at all — it's design freedom.** The most
+valuable next deliverable is therefore no longer more docs but the **first
 bring-up** (a minimal SSO + stub backend + a booting client), which converts the
 (B) unknowns from "blocked" to "iterate."
 

@@ -4,7 +4,7 @@ title: REST Backend Surface (VkRestUtils)
 summary: Inventory of the Vk*Resource REST client classes — the backend API surface the server must implement; per-resource purpose and re-impl priority.
 keywords: [rest, http, libcurl, api, resources, auth, sso, battles, sessions, pilots, store, leaderboards, watchdog]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E1, E2]
 ---
 
@@ -59,6 +59,36 @@ To merely **boot to a usable state and start a match**, a server must answer:
 session/battle-server allocation chain (`VkSessionRequestResource` →
 `VkSessionResource` → `VkBattleServerResource`). Cosmetics/store/loot are
 non-blocking for playability and can return empty/stub payloads initially.
+
+## Response & error-handling contract (E2)
+
+How the client reacts to backend responses — what a re-impl must return to drive
+its flows (recovered from auth/HTTP/relogin strings):
+
+- **Token expiry → silent refresh.** An expired-token response triggers the
+  `grant_type=refresh_token&refresh_token=%s` exchange (`03-*`); the client
+  retries the original call with the new access token. So return the standard
+  401/expired signal and honor the refresh grant. A guard string *"Non-expiring
+  token received expired response"* shows it distinguishes token classes.
+- **No refresh token → relogin.** *"Failed to find SSO refresh token - please log
+  in via launcher"* + `EVkVrUiQuitType::RELOGIN` / *"Going to Relogin"*: if refresh
+  fails/absent, the client drops to a **relogin** flow (re-auth from scratch).
+- **Incompatible build → registration refused.** *"Cannot register client
+  (incompatible build)"* / `ClientOutdated` / `ClosedConnectionsDueToIncompatible
+  Version` — the `clients`/`signup` step (and the net connect) gate on build
+  version; a re-impl must report a **compatible** version (`09-*`/`14-*`).
+- **Connection failures → client-side retry.** Transient connect failures retry
+  with `ConnectionRetryDelay` before surfacing an error (`06-*`).
+- **Missing JSON fields tolerated.** The `FVkJsonObject` parser logs and
+  continues on a missing field (`13-*`) — a re-impl may omit unknown fields
+  without crashing the client (but required-for-flow fields still matter).
+- **Server-side join gate.** The dedicated server runs UE4 **`PreLogin`**
+  (*"PreLogin failure: %s"*) — the app-level admission check at match join,
+  layered on `NMT_Login` (`02-*`).
+
+A re-impl that returns the envelope (`13-*`) with sensible `status`, honors the
+refresh grant on expiry, and reports a compatible build covers the client's
+error-path expectations.
 
 ## Confirmed REST path structure (E2)
 

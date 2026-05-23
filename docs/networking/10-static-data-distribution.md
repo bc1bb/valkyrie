@@ -4,7 +4,7 @@ title: Static Data Distribution & Voice
 summary: VkStaticDataResource fetches a JSON file manifest (GetFileList → 'files' array of file objects), then downloads each file's contents — a CDN/manifest pattern the client must receive before play. Plus a note on VOIP.
 keywords: [static data, manifest, getfilelist, files, cdn, download, VkStaticData, voice, voip, voicechannel, json]
 status: draft
-updated: 2026-05-22
+updated: 2026-05-23
 evidence: [E2]
 ---
 
@@ -28,6 +28,34 @@ reveal the JSON contract:
 
 `UVkStaticDataStatics` exposes this data to gameplay; `Static_Data` is the
 in-engine category.
+
+### What static data *contains* — entry taxonomy (E2)
+
+Static data is a **versioned catalog of named entries** the client resolves by
+key. Each entry has a **`StaticDataUniqueName`** + a human **ShortName** (must be
+unique — *"The ShortName %s is being used more than once"*) + `StaticDataLink(s)`
++ a `StaticDataMapName`; the set is versioned (`About_StaticDataVersion` /
+`STATIC DATA VERSION`). Recovered entry **categories**:
+- **`ShipClassStaticData`** — the playable ship classes.
+- **`UpgradeStaticData`** — ship upgrades.
+- **Game modes** — resolved here: *"No game mode unique name found (-gamemode=
+  xxx). Trying to determine static data entry from short name"* — so `-gamemode=`
+  (`05-*`) maps to a static-data entry by unique-name/short-name.
+- **Maps** — via `StaticDataMapName`.
+- **Challenge links** — *"Backend delivered challenge is missing matching static
+  data (ID %d, Name %s)"*: backend challenge objects (`11-*`/`13-*`) reference
+  static-data entries by **ID + Name**, which must exist in the catalog.
+
+So static data is the **name↔entry dictionary** binding backend identifiers
+(game-mode/ship/upgrade/challenge unique-names) to client content. A re-impl
+backend's static data must define every unique-name the pilot/session/challenge
+objects refer to, or the client errors on lookup.
+
+### It is login-gating (E2)
+
+`LoginMessage_StaticDataDownloadFailed` is a **login-blocking** message — a static
+-data download failure stops login. This confirms the **P0** classification: the
+client will not proceed without a successful static-data fetch.
 
 ### GetFileList response shape — CONFIRMED (E3, via disassembly `13-*`)
 
@@ -59,20 +87,20 @@ early unblocks everything downstream. (See roadmap `09-*`.)
 
 ## Voice (VOIP)
 
-Voice chat is present (`VoiceChat`, `VoIP`, `VoiceChannel`). UE4 supports
-networked voice through its `IOnlineVoice` interface; the audio path here also
-involves the Oculus spatializer (Wwise). Whether voice packets ride the game
-NetDriver (replicated voice) or a platform-relayed channel is undetermined.
+Voice chat is present (`VoiceChat`, `VoIP`, `VoiceChannel`). **Resolved (E2,
+`08-*`):** it is **UE4's built-in VOIP over the Opus codec** (`opus_packet_get_
+nb_*`, `AddVoicePacket to=/from=`), riding the game NetDriver — not a platform
+relay. Push-to-talk is configurable (`bRequiresPushToTalk`).
 
 ### Re-implementation value
 
-Voice is **non-blocking** for playability (P3). A private server can omit voice
-relay initially; players simply won't hear in-game VOIP.
+Voice is **non-blocking** for playability (P3). A private server on the same
+engine inherits VOIP packet relay for free; it can also be ignored initially.
 
 ## Open questions
 
 - Exact `files[]` object schema (field names, whether URLs are absolute or
-  relative to the VGS host).
+  relative to the VGS host). *(Partly closed: `{filename, uri, checksum}` + manifest
+  `branch_name`/`build_number`, `13-*`.)*
 - Whether static data is cached on disk and re-validated by hash/version.
 - The `GetFileList` request path/verb on the VGS host.
-- Voice transport: replicated over NetDriver vs platform relay.
