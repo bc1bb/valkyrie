@@ -72,6 +72,7 @@ a re-implementer; this INDEX is the full catalogue.
 | `networking/15-anticheat-integrity.md` | net | draft | No EAC/BattlEye; only Steam VAC (passive) + engine NetChecksum/SecurityViolation + server-authoritative play. Private server not blocked by AC. |
 | `networking/schemas/vgs-rest.md` | net | draft | Consolidated VGS REST reference: base/versioning, endpoints, object fields, MVP backend. |
 | `reimpl/01-mvp-server-guide.md` | reimpl | draft | **Actionable build walkthrough**: redirect→SSO→pilot→staticdata→matchmaking→battle server→in-match→keepalive; what to stub. |
+| `reimpl/02-server-build-gaps.md` | reimpl | draft | **What's left to build the server**: gaps sorted into static-recoverable / needs-live-client / design-freedom, each with the method to close it. |
 | `gameplay/00-overview.md` | gameplay | living | Gameplay systems map (VkGame ~1562 classes) — entry point for whole-game RE. |
 | `gameplay/01-player-ship-control.md` | gameplay | draft | Player/ship control (controller/pawn/vehicle/movement/cockpit/launch) + full scoring-event taxonomy. |
 | `gameplay/02-combat.md` | gameplay | draft | Combat: weapon taxonomy/firing, projectiles vs lock-on missiles, turrets, multi-channel damage model, hit/critical points, shields, explosions; firing RPCs. |

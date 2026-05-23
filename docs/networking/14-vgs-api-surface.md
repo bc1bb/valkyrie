@@ -164,6 +164,15 @@ A re-impl `clients`/`signup` endpoint must **accept** this body (it can ignore
 most fields) and return OK + bootstrap config; gate on `build_version`/
 `deprecated_version` only if you want version control (`OutdatedClient`, `09-*`).
 
+**Response object (E3, recovered via `recover_object.py build_version`):** the
+`clients` reply echoes the fingerprint and adds identity + a wallet —
+`{ id, href, client_id, build_version, os_platform, computer_name, hmd_type,
+is_2d, currency, balance }`. So the `/clients` response **seeds the client's
+wallet** (`currency`/`balance`) and returns a self-`href` + `id`. Note version
+gating is hard: *"Cannot register client (incompatible build)"* /
+`ClientOutdated` / `ClosedConnectionsDueToIncompatibleVersion` — a re-impl should
+report a **compatible** build or the client refuses to register/connect.
+
 ## Client-event telemetry + throttling
 
 `client-event` endpoint with `event_name`/`event_type`/`severity`/`details`/
