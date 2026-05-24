@@ -50,3 +50,17 @@ __pycache__/
 !docs/**
 !analysis/scripts/
 !analysis/scripts/**
+
+# --- Local-only runtime artifacts (these live UNDER docs/ but must stay local) ---
+# Private keys, generated certs, and captured request logs may contain secrets
+# (auth tokens, Steam tickets) and are machine-specific. Never commit them.
+# These rules come after `!docs/**` so they take precedence.
+docs/reimpl/mvp-server/certs/
+docs/reimpl/mvp-server/logs/
+docs/reimpl/mvp-server/server.crt
+docs/reimpl/mvp-server/*.key
+
+# --- Real static-data catalog EXTRACTED FROM THE GAME PAK (copyrighted) ------
+# server.py reads these at runtime; they are genuine game assets recovered via
+# analysis/scripts/pak_extract.py and must stay local (clean-room policy).
+docs/reimpl/mvp-server/staticdata_real/
