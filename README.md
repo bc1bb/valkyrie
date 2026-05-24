@@ -4,7 +4,7 @@
 > aimed at understanding and (eventually) re-implementing the now-defunct
 > online backend so the game remains playable after official server shutdown.
 
-## TL;DR — Run the game offline (2D, no VR)
+## TL;DR — Run the server reimplementation
 
 The repo now ships a runnable clean-room backend (`docs/reimpl/mvp-server`) and a small
 reversible boot patcher (`tools/vk_boot_patch`) that together boot the shipped client to

@@ -17,8 +17,8 @@
 // process, and since nothing on disk is modified, simply not running the tool (or
 // restarting the game) reverts everything.
 //
-// Distribution note: ship THIS tool (our own code). Never redistribute the patched
-// game or any game bytes. The tool verifies the original bytes before writing and
+// Distribution note: Never redistribute the patched game or any game bytes.
+// The tool verifies the original bytes before writing and
 // no-ops on any build that does not match, so it cannot corrupt a different binary.
 //
 // Build (from a VS Developer environment so the MSVC linker is found):
