@@ -20,7 +20,6 @@ no game code reused. It is the concrete companion to `reimpl/01-mvp-server-guide
 |------|------|
 | `server.py` | The backend: HTTPS, `POST /oauth/token` (Basic `valkyrieClient` → HS256 JWT), envelope-wrapped VGS REST (accounts/pilot/staticdata/clients/sessions/battleservers), permissive stub + request logging for everything else. |
 | `selftest.py` | Starts the server in-process and exercises the contract (8 checks). **Result: 8/8 pass.** |
-| `launch.sh` | Diagnostic Proton launcher for the shipped client (`nullrhi`/`flat` modes). |
 
 ## Run
 
@@ -57,27 +56,3 @@ This validates the backend **against a mock client**, not the shipped game. The
 remaining unknowns (exact JSON value-types/nesting, TLS pinning, the `NMT_Login`
 join-token bytes) need the real client driving it. On the analysis machine the
 client **could not be brought up** — see the launch diagnostic below.
-
-## Launch diagnostic (E4, this hardware)
-
-`launch.sh` ran the shipped client through Proton-Experimental on the analysis
-box (Intel UHD 630 iGPU, headless X :1, no VR runtime). Findings:
-
-- **Proton/DXVK init succeeds** — DXVK 2.7.1 brought up Vulkan and *found* the
-  UHD 630 (Mesa). So translation/GPU enumeration is not the wall.
-- **OpenVR/OpenXR fail to initialize** (no VR runtime) — expected, non-fatal.
-- The game **process launches and stays alive**, but **hangs in earliest UE4
-  pre-initialization**: it creates `…/VkGame/Saved/Config/*.ini` as **empty
-  (2-byte) handles** and **never writes a log** — even with `-log -abslog=…` and
-  `-nullrhi -NOSTEAM`. So the hang is *before* the logging subsystem inits, and
-  is **not** the render path (nullrhi) nor the Steam-wait (`-NOSTEAM`).
-- (The `xalia.exe … No displays available` SDL3 error in the Proton output is
-  Proton's accessibility helper, **not** the game — the game has its own
-  process and the X display is reachable.)
-
-**Conclusion:** the client cannot serve as the live oracle on this headless/iGPU
-host — it stalls in early init (most likely the HMD/early-platform path) before
-reaching networking. Closing bucket-B needs a box with a real GPU (and ideally a
-headset or a null-HMD driver) where the client reaches the login screen; then
-this backend + a DNS/`:443` redirect (root needed) drives the iteration loop.
-This matches the earlier headless-launch stalls noted in the project history.
