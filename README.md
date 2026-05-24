@@ -4,6 +4,34 @@
 > aimed at understanding and (eventually) re-implementing the now-defunct
 > online backend so the game remains playable after official server shutdown.
 
+## TL;DR — Run the game offline (2D, no VR)
+
+The repo now ships a runnable clean-room backend (`docs/reimpl/mvp-server`) and a small
+reversible boot patcher (`tools/vk_boot_patch`) that together boot the shipped client to
+its **main menu** with no live servers and no VR headset. You must own the game on Steam;
+we ship no game files.
+
+1. **OpenSSL fix** (one-time): set the user env var `OPENSSL_ia32cap=:~0x20000000` (works
+   around a 2017 OpenSSL SHA-NI crash on modern CPUs), then restart Steam.
+2. **Redirect + trust** (one-time): point the backend hosts at `127.0.0.1` and trust the
+   bundled local CA — see `docs/reimpl/mvp-server/README.md` (covers `login.eveonline.com`,
+   `vkpilot.live-valkyrieapi.com`, `vgs-tq.eveonline.com`).
+3. **Start the backend** (one host, port 443):
+   `VK_PORT=443 VK_BASE=https://vkpilot.live-valkyrieapi.com VK_TLS_MAX=1.2 python docs/reimpl/mvp-server/server.py`
+4. **Run the boot patcher**: `tools/vk_boot_patch/vk_boot_patch.exe` — it waits for the
+   game and neutralizes the VR-only login gate in **live memory** (reversible; never
+   modifies the game file). `--revert` undoes it.
+5. **Launch** via Steam (`steam://rungameid/688480`).
+
+→ The client logs in against your local backend and reaches the **main menu** in 2D.
+Verified live (RTX 4070, no headset) — see screenshot `docs/reimpl/mvp-server/logs/menu_via_patcher.png`.
+Build/usage: `tools/vk_boot_patch/README.md`. Full story: `docs/reimpl/04-live-bringup-log.md`.
+
+> **Scope:** this boots the client to its menu; in-menu flows, matchmaking, and live
+> matches are not served yet. It's a preservation/research setup, not a finished server.
+> The patcher is needed only because the title is VR-only and the 2D login path waits on a
+> VR-platform event that never fires without a headset (`docs/reimpl/07-*`).
+
 ## What this repo IS
 
 - **Documentation only.** Prose descriptions of how the game works technically:

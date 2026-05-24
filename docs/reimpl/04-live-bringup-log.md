@@ -539,10 +539,18 @@ login. The clean-room MVP backend is otherwise sufficient: every REST step the c
 makes (oauth/auth/clients/pilots/pilot-lookup/accounts/staticdata + heartbeats) is
 satisfied, and the only blocker is this client-side platform gate.
 
-**Realistic clean boot path (deferred by decision):** a documented, copyright-free
-runtime loader (our own code) that sets `GameInstance+0x19d0` (or NOPs the gate read
-at `0x1406ec6fa`) — the standard preservation technique for a platform-gated VR-only
-title run in 2D. Not built this session.
+**Clean boot path — BUILT & VERIFIED (`tools/vk_boot_patch`):** a tiny dependency-free
+Rust `.exe` that NOPs the gate's conditional jump in **live process memory** (never
+touches the game file): at main-module RVA `0x6ec701` the bytes `74 59` (`je <timeout>`)
+→ `90 90`, with original-byte verification (refuses to write on a non-matching build)
+and a `--revert`. Verified end-to-end with **NO Frida**: backend on :443 → run patcher →
+launch via Steam → the client logs in, fetches `/stores/7/offers` + `/hero_survival/1`,
+and **renders the main menu** (`mvp-server/logs/menu_via_patcher.png`; patcher confirmed
+reading `74 59` then writing `90 90` against the live process). This is the standard,
+reversible preservation technique for a platform-gated VR-only title run in 2D — we ship
+only our own tool, never any game bytes. (Note: after reaching the menu the client
+auto-closes after a few minutes with no crash dump — a separate menu-phase/new-player-flow
+behavior, not a login issue.)
 
 ## Frida safety lesson (reusable)
 

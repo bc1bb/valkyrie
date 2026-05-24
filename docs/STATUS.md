@@ -132,7 +132,15 @@ Capstone) — the remaining E3 items above are tractable with it, not only E4.
 2. **Exercise the menu** (reachable via the runtime force; the client is the oracle):
    drive the front-end flows and capture exact request/response shapes for store
    offers, `hero_survival`, `sessionrequests`, friends/challenges — converting E3
-   schemas to E4 from a live, menu-stable client.
+   schemas to E4 from a live, menu-stable client. **Boot-to-menu is now turnkey via
+   `tools/vk_boot_patch` (built + verified no-Frida 2026-05-24).**
+
+   - **Runtime gate-patch SHIPPED & VERIFIED:** `tools/vk_boot_patch/` — a tiny
+     dependency-free Rust `.exe` that NOPs the gate read (RVA `0x6ec701`, `74 59`→
+     `90 90`) in **live process memory** (never touches the game file), with original-
+     byte verification and `--revert`. Verified end-to-end with **no Frida**: backend on
+     :443 → run patcher → launch via Steam → client logs in, fetches store-offers +
+     hero_survival, and **renders the main menu** (`mvp-server/logs/menu_via_patcher.png`).
 3. Stand up the **battle server + PartyBeacon host**; confirm the WS handshake.
 4. Fill meta (store/loot/leaderboards/challenges) from the recovered objects.
 
