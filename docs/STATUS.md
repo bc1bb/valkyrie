@@ -4,7 +4,7 @@ title: Preservation Status & Confidence Map
 summary: Bird's-eye view for a re-implementer — what's known at what evidence tier (E4 verified → E5 inferred), what's blocking vs done, and the prioritized next actions. Snapshot of project completeness.
 keywords: [status, confidence, evidence, coverage, summary, handoff, priorities, blocking, verified, capture]
 status: living
-updated: 2026-05-23
+updated: 2026-05-24
 ---
 
 # Preservation Status & Confidence Map
@@ -38,7 +38,8 @@ embedded strings/symbols · **E3** static disassembly · **E4** live observation
 | Progression / economy / cosmetics | ✅ strong | E2/E3 | Silver/Gold, rewards object, taxonomies. `11-*`,`13-*` |
 | Telemetry / watchdog | ✅ complete | E2 | Epic DataRouter (skip) + local watchdog. `07-*`,`14-*` |
 | Anti-cheat / integrity | ✅ complete | E1/E2 | No EAC/BattlEye; VAC + server authority. `15-*` |
-| Static-data manifest | ✅ confirmed | E3 | `files[{filename,uri,checksum}]+branch/build`. `10-*` |
+| Static-data manifest + GetFileList completion | ✅ complete | **E4** | `files[{filename,uri,checksum}]+branch/build`; completion `0x14209b550` succeeds live, fires its delegate, files byte-identical to pak. **NOT the wall** (Session-3 "completion-notify gap" was a probe misread, retracted). `10-*`, `reimpl/04-*` |
+| Login state machine + **menu reached** | ✅ **MENU REACHED** | **E4** | Client boots→logs in→**renders the interactive main menu** (2D). Lone blocker: secondary gate `GameInstance+0x19d0` (state-2 handler); forcing it cascades login→menu, stable. **Natural trigger is client/VR-platform-bound (OSS login-complete that never fires in 2D), NOT server-fixable** — see below. `reimpl/04-*` S4–S5, `reimpl/07-*` |
 | Local persistence / settings | ✅ complete | E2 | Cache, not authoritative. `engine/05-*` |
 
 ### Gameplay / client architecture (whole-game RE)
@@ -67,6 +68,34 @@ embedded strings/symbols · **E3** static disassembly · **E4** live observation
 layouts (need real disassembly w/o symbols), algorithm internals, and all
 asset/content/balance in the `.pak` (out of scope).
 
+## Live client bring-up (E4, 2026-05-23/24) — the MVP backend boots the client to its MENU
+
+The clean-room MVP backend (`reimpl/mvp-server`) drives the **shipped client**
+(native Windows, RTX 4070, no VR, 2D mode) live, redirected via hosts + a local CA,
+**all the way to the interactive main menu** (Session 4, 2026-05-24). Prerequisite
+unblock: the 2017 OpenSSL **SHA-NI crash** on modern CPUs, fixed with
+`OPENSSL_ia32cap=:~0x20000000`. The client completes the **entire REST login
+bootstrap** and, with one secondary gate satisfied, renders the menu:
+
+```
+client-event(startup) → /oauth/token (steam_ticket) → /auth → /clients (registered)
+→ /pilots/1 → /pilot-lookup → vgs-tq accounts → GET /staticdata (GetFileList)
+→ [static data completes] → store offers → new-player flow → MAIN MENU
+```
+
+Walls broken: `/clients` (non-empty `Location` header); `/staticdata` framing (bare
+top-level `files`); the static-data catalog (recovered from the client's own pak,
+md5-verified byte-identical, 43/43); and **the login wall itself**. The Session-3
+"static-data completion never fires / listener NULL" diagnosis was a **probe misread
+and is retracted** — static-data completes correctly. The genuine blocker is a single
+**secondary gate byte `GameInstance+0x19d0`** checked by the state-2 ("DOWNLOADING
+STATIC DATA") handler `0x1406ec6a0`. A safe Frida force of that byte cascades the whole
+login forward (store/purchases/new-player) and the client **reaches the menu, stable
+for minutes** (screenshot `mvp-server/logs/menu_reached.png`). **Current task:** set
+`GameInstance+0x19d0` *naturally* — it's gated on the online/session state reaching
+"ready" so the store/catalog subsystem attaches and ticks (`reimpl/07-*`). Full trace:
+`reimpl/04-live-bringup-log.md` (Session 4).
+
 ## Blocking-vs-done for restoring multiplayer
 
 **Done (enough to build):** host topology, auth contract, REST surface + object
@@ -92,11 +121,18 @@ Capstone) — the remaining E3 items above are tractable with it, not only E4.
 
 ## Recommended next actions (priority)
 
-1. **Capture one session** (`methodology/traffic-capture-plan.md`): redirect +
-   TLS stub OR gdb on `Vk*HttpRequest`/`SetHeader` — converts the E3 schemas to
-   E4 and nails value types + the join token. Highest leverage.
-2. Build the **P0 backend** (SSO + accounts + pilot + static-data) per
-   `reimpl/01-*` and iterate against the client (it's the spec oracle).
+1. **(RESOLVED — not server-fixable.)** Reaching the menu without a client nudge
+   was traced to a dead end: `GameInstance+0x19d0` is set only by the store-catalog
+   subsystem callback, which is driven by an internal work-queue populated by the
+   **OnlineSubsystem login-complete event** — reflection/VR-platform-bound, and it
+   never fires in 2D/no-VR. No REST response triggers it (`reimpl/04-*` S5,
+   `reimpl/07-*`). The realistic clean boot path is a documented runtime gate-patch
+   (our own loader sets `+0x19d0` / NOPs the read at `0x1406ec6fa`) — **deferred by
+   decision** (documented known-limitation, client left unmodified).
+2. **Exercise the menu** (reachable via the runtime force; the client is the oracle):
+   drive the front-end flows and capture exact request/response shapes for store
+   offers, `hero_survival`, `sessionrequests`, friends/challenges — converting E3
+   schemas to E4 from a live, menu-stable client.
 3. Stand up the **battle server + PartyBeacon host**; confirm the WS handshake.
 4. Fill meta (store/loot/leaderboards/challenges) from the recovered objects.
 

@@ -2,10 +2,10 @@
 doc: net-staticdata
 title: Static Data Distribution & Voice
 summary: VkStaticDataResource fetches a JSON file manifest (GetFileList → 'files' array of file objects), then downloads each file's contents — a CDN/manifest pattern the client must receive before play. Plus a note on VOIP.
-keywords: [static data, manifest, getfilelist, files, cdn, download, VkStaticData, voice, voip, voicechannel, json]
+keywords: [static data, manifest, getfilelist, files, cdn, download, VkStaticData, voice, voip, voicechannel, json, completion, listener, wall, login, e4]
 status: draft
-updated: 2026-05-23
-evidence: [E2]
+updated: 2026-05-24
+evidence: [E2, E3, E4]
 ---
 
 # Static Data Distribution & Voice
@@ -84,6 +84,82 @@ dependency (the client likely won't progress past load without valid static
 data). A private backend must serve a `GetFileList` returning a `files` array
 and then serve each file's bytes. Because it gates loading, getting this right
 early unblocks everything downstream. (See roadmap `09-*`.)
+
+### CONFIRMED LIVE (E4, 2026-05-23) — the real catalog ships in the client's pak
+
+The genuine static-data files were recovered from the shipped pak (no guessing):
+
+- **Source:** `WindowsNoEditor/VkGame/Content/Paks/VkGame-WindowsNoEditor.pak`
+  (UE4 pak **v3, unencrypted**) ships `VkGame/Content/StaticData/**/*.json` as
+  **plain uncompressed JSON** — 43 files across categories: `Currency`, `GameMode`
+  (`GameModes.json`, `Wormholes.json`), `HeroShips` (`Covert/Fighter/Heavy/Support/
+  NPC/NonTechTreeShips`), `Maps`, `Implants`, `Leagues`, `Reputation`, `Scoring`,
+  `Popups`, `PilotCosmetics`, `HeroCosmetics`, `IAP`, `GlobalBoosters`,
+  `LootCapsules`, `Platforms`, `DailyChallenges`, `RewardTiers` — each with a
+  `Schema.json`. Tools: `analysis/scripts/pak_list.py`, `pak_extract.py`.
+- **File format (confirmed):** each data file is
+  `{ "schema": "./Schema.json", "uniqueName": "<catalog>", "dbID": <int>,
+  "displayName": "<str>", "<category>": [ {entry}, … ] }`. Entries are keyed by
+  **`uniqueName`** (dotted, e.g. `currency.visk`, `shipclass.Fighter`,
+  `gamemode.*`) + a numeric **`dbID`**; this resolves the `StaticDataUniqueName`
+  taxonomy in `01-*`. The manifest `files[]` entries are `{filename, uri,
+  checksum}`; **`checksum` is md5 (hex)** of the file bytes (confirmed accepted by
+  the client).
+- **Live behaviour:** when the GetFileList manifest's md5 checksums match the
+  client's local pak copies, the client **does not download** — it uses its local
+  static data. So a re-impl can serve the pak-extracted files with correct md5s
+  and the client treats them as current. (Serving an empty/stub manifest instead
+  makes the checksum mismatch and the client downloads the stub.)
+- **Important:** static-data CONTENT is NOT the current login blocker — see
+  `reimpl/04-live-bringup-log.md` (Session 2). With both an empty stub and the
+  full real catalog the client reaches the same post-registration "connection-
+  ready" timeout, so the final wall is elsewhere.
+
+The `files[]` schema and absolute-vs-relative URL question (Open questions, below)
+are answered: filenames are repo-relative paths under `StaticData/`, uris are
+absolute on the VGS host, checksum is md5.
+
+## GetFileList completion handler & the completion-notification wall (E3/E4, 2026-05-24)
+
+The `FVKStaticDataResource` GetFileList response handler is **`0x14209b550`** (found
+by direct xref to the manifest fields `branch_name` `0x143105f30` / `build_number`
+`0x143105f60`; the resource's log-format strings are linker-pooled and have no direct
+xref). Instruction-level behaviour:
+
+- Null-`Response` guard → transport-failure path.
+- Parse the body via `0x142038010` into an `FVkJsonObject`.
+- Read `branch_name` + `build_number` (logged as `"CL %d : %s"` — **not** a gate).
+- `TryGetObjectArrayField("files")`; per entry read **`filename` / `checksum` / `uri`**
+  (all three required, else the entry is dropped — the "File object didn't contain
+  required fields" path). Each valid entry is registered into a manager at
+  `resource+0x90` and appended to a local list.
+- **Success gate (`0x14209bc50`):** `success = (Response != null) && (validFileCount > 0)`.
+  With a well-formed manifest this is **true** — GetFileList SUCCEEDS (verified live).
+
+**The login wall is NOT GetFileList and NOT static-data content (E4, 2026-05-24).**
+Confirmed live: GetFileList succeeds; the served files are **byte-identical to the
+client's pak** (re-extracted all 43 `StaticData/*.json` and md5-compared — 43/43 exact),
+so cache-hit (zero downloads) is correct. With both forced downloads (cache-busted md5)
+and pure cache-hit the client stalls **identically** on "DOWNLOADING STATIC DATA",
+heartbeats `PUT /clients/1` for `heartbeat_seconds`, then `DELETE`s and shows "A NETWORK
+ERROR HAS OCCURRED" (`LoginMessage_StaticDataDownloadFailed` / `_GenericTimeout`).
+
+**Root cause located:** after GetFileList succeeds, the handler's **completion-notify
+block is skipped** — at `0x14209bc6c` it gates on `resource+0x30 != 0`, and a live probe
+found `resource+0x20` (the completion listener) **NULL** and `resource+0x30 == 0` at
+completion. So the static-data resource finishes but **notifies nothing**, and the login
+state machine is never told static data is ready → it times out. The open question for a
+re-impl is therefore **how the frontend/login flow subscribes to the static-data "done"
+signal** (what sets `resource+0x20` / `resource+0x30`) and why it is unset — likely a
+listener that depends on a field not yet supplied in the pilot/accounts/clients
+responses, or a polled "ready" state never set. See `reimpl/04-live-bringup-log.md`
+(Session 3) for the full trace and the ruled-out list.
+
+> Manifest serving (re-impl): advertise only the real catalog data files in `files[]`
+> (the live evidence: the client fetches exactly the 26 data files and never requests a
+> `Schema.json`, so the 17 `Schema.json` files must NOT be listed). `checksum` = md5 hex
+> of the served bytes. A `Location` header on the manifest/file responses is **not**
+> required (tested, no effect).
 
 ## Voice (VOIP)
 
